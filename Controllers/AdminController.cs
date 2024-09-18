@@ -15,30 +15,8 @@ namespace SingleTicketing.Controllers
         {
             _context = context;
         }
-        // GET: /Admin/ManageUser/5
-        public IActionResult ManageUser(int id)
-        {
-            var user = _context.Users.Find(id); // Fetch user by ID
-            if (user == null)
-            {
-                return NotFound(); // Handle case where user is not found
-            }
-            return View(user); // Return view with the user model
-        }
-
-        // POST: /Admin/UpdateUser
-        [HttpPost]
-        public IActionResult UpdateUser(User user)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Update(user); // Update user in the database
-                _context.SaveChanges(); // Save changes to the database
-                return RedirectToAction("Index"); // Redirect to another action
-            }
-            return View(user); // Return view with validation errors
-        }
-
+    
+       
         public IActionResult Index()
         {
             try

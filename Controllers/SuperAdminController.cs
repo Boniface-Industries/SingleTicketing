@@ -3,14 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SingleTicketing.Data;
 using SingleTicketing.Models;
-using Microsoft.Extensions.Logging;
-
 namespace SingleTicketing.Controllers
 {
     public class SuperAdminController : Controller
     {
         private readonly MyDbContext _context;
-        private readonly ILogger<SuperAdminController> _logger;
         public IActionResult Index()
         {
             try
@@ -24,10 +21,9 @@ namespace SingleTicketing.Controllers
                 return View(new List<User>()); // Return an empty list to avoid null reference
             }
         }
-        public SuperAdminController(MyDbContext context, ILogger<SuperAdminController> logger)
+        public SuperAdminController(MyDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
         public IActionResult ManageUser(int id)
         {
@@ -56,62 +52,39 @@ namespace SingleTicketing.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateUser(UpdateViewModel model)
+        public IActionResult UpdateUser(UpdateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var user = _context.Users.Find(model.Id);
-                    if (user == null)
+                    var existingUser = _context.Users.Find(viewModel.Id); // Find the user by Id
+                    if (existingUser == null)
                     {
                         TempData["ErrorMessage"] = "User not found.";
-                        return RedirectToAction("ManageUser");
+                        return View("ManageUser", viewModel); // Return to the same view
                     }
 
-                    user.Role = model.Role;  // Update role
-                    _context.Update(user);
-                    _context.SaveChanges();
+                    existingUser.Username = viewModel.Username;
+                    existingUser.Role = viewModel.Role;
+                    // Do not update PasswordHash or other fields that should not be modified
+
+                    _context.Update(existingUser); // Update the user in the database
+                    _context.SaveChanges(); // Save changes to the database
 
                     TempData["SuccessMessage"] = "User details updated successfully.";
-
-                    // Redirect to the ManageUser page with the user ID to avoid form resubmission errors
-                    return RedirectToAction("ManageUser", new { id = model.Id });
+                    return RedirectToAction("Index"); // Redirect to the Index action
                 }
                 catch (Exception ex)
                 {
                     TempData["ErrorMessage"] = "An error occurred while updating the user.";
-                    _logger.LogError(ex, "Error updating user with Id {UserId}", model.Id);
+                    return View("ManageUser", viewModel); // Return the same view with the current user data
                 }
             }
-            else
-            {
-                // Log model state errors
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                _logger.LogError("ModelState invalid: {Errors}", string.Join(", ", errors));
 
-                // Re-populate the roles if ModelState is invalid
-                model.Roles = GetRolesList();
-
-                TempData["ErrorMessage"] = "Please correct the errors in the form.";
-            }
-
-            // Return the same view if the ModelState is invalid
-            return View("ManageUser", model);
+            TempData["ErrorMessage"] = "Please correct the errors in the form.";
+            return View("ManageUser", viewModel); // Return the same view with validation errors
         }
-
-
-        private List<SelectListItem> GetRolesList()
-        {
-            return new List<SelectListItem>
-    {
-        new SelectListItem { Value = "Driver", Text = "Driver" },
-        new SelectListItem { Value = "SuperAdmin", Text = "Super Admin" },
-        new SelectListItem { Value = "Enforcer", Text = "Enforcer" },
-        new SelectListItem { Value = "Admin", Text = "Admin" }
-    };
-        }
-
     }
 }
 
