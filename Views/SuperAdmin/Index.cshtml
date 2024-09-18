@@ -1,9 +1,11 @@
 ﻿@model IEnumerable<SingleTicketing.Data.User>
+
+
 @{
-    ViewData["Title"] = "Manage User";
+    ViewData["Title"] = "User List";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h1>User List</h1>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -19,35 +21,42 @@
     </div>
 }
 
-<h2>User Management</h2>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
 <table class="table">
     <thead>
         <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Actions</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PasswordHash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Role)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var user in Model)
-            {
-                <tr>
-                    <td>@user.Username</td>
-                    <td>@user.Role</td>
-                    <td>
-                        <a asp-action="ManageUser" asp-route-id="@user.Id">Manage</a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="3">No users found</td>
-            </tr>
-        }
-
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PasswordHash)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
     </tbody>
 </table>

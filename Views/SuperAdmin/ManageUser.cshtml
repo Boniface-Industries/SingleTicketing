@@ -1,4 +1,4 @@
-﻿@model UpdateViewModel
+﻿@model SingleTicketing.Models.UpdateViewModel
 
 <h2>Manage User</h2>
 
@@ -17,18 +17,11 @@
 }
 
 <form asp-action="UpdateUser" method="post">
-    @Html.AntiForgeryToken()
+    
     <input type="hidden" asp-for="Id" />
     <input asp-for="Username" class="form-control" readonly />
-    <select asp-for="Role" class="form-control">
+    <select asp-for="Role" asp-items="Model.Roles" class="form-control">
         <option value="">Select Role</option>
-        @if (Model.Roles != null)
-        {
-            @foreach (var role in Model.Roles)
-            {
-                <option value="@role.Value" selected="@(role.Value == Model.Role ? "selected" : null)">@role.Text</option>
-            }
-        }
     </select>
 
     <button type="submit" class="btn btn-primary">Update</button>
