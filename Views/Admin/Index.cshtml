@@ -1,0 +1,53 @@
+﻿@model IEnumerable<SingleTicketing.Data.User>
+@{
+    ViewData["Title"] = "Manage User";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<h2>User Management</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>License Number</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    <td>@user.Role</td>
+                    <td>
+                        <a asp-action="ManageUser" asp-route-id="@user.Id">Manage</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">No users found</td>
+            </tr>
+        }
+
+    </tbody>
+</table>

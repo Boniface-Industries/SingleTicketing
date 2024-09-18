@@ -1,0 +1,38 @@
+﻿@model UpdateViewModel
+
+<h2>Manage User</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="UpdateUser" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Username"></label>
+        <input asp-for="Username" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="Role"></label>
+        <select asp-for="Role" class="form-control" asp-items="Model.Roles">
+            <option value="">Select Role</option>
+            @foreach (var role in Model.Roles)
+            {
+                <option value="@role.Value" selected="@role.Selected">@role.Text</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
