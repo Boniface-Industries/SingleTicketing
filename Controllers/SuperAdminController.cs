@@ -95,6 +95,8 @@ namespace SingleTicketing.Controllers
 
             return View(user);
         }
+
+        // GET: SuperAdmin/Edit/5
         // GET: SuperAdmin/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
@@ -104,30 +106,36 @@ namespace SingleTicketing.Controllers
                 return NotFound();
             }
 
-            // Create a list of roles for the dropdown
-            ViewData["Roles"] = new SelectList(new List<string> { "Admin", "Driver", "Enforcer" });
+            // Prepare roles for the dropdown
+            ViewBag.Roles = new SelectList(new List<string> { "Admin", "Driver", "Enforcer" }, user.Role);
 
             return View(user);
         }
 
+
         // POST: SuperAdmin/Edit/5
-        [HttpPost, ActionName("Edit")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id,Username,Role")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Role")] User user)
         {
+            if (id != user.Id)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var existingUser = await _context.Users.FindAsync(user.Id);
+                    var existingUser = await _context.Users.FindAsync(id);
                     if (existingUser == null)
                     {
                         return NotFound();
                     }
 
+                    // Update only the relevant fields
                     existingUser.Username = user.Username;
                     existingUser.Role = user.Role;
-                    // Do not update PasswordHash or other sensitive fields
 
                     _context.Update(existingUser);
                     await _context.SaveChangesAsync();
@@ -135,31 +143,24 @@ namespace SingleTicketing.Controllers
                     TempData["SuccessMessage"] = "User details updated successfully.";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
+                catch (DbUpdateConcurrencyException ex)
                 {
                     TempData["ErrorMessage"] = "An error occurred while updating the user.";
                     Console.WriteLine($"Exception: {ex.Message}");
-                    return View(user);
                 }
-            }
-
-            // Log the validation errors
-            foreach (var state in ModelState)
-            {
-                foreach (var error in state.Value.Errors)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"ModelState Error: {error.ErrorMessage}");
+                    TempData["ErrorMessage"] = "An unexpected error occurred.";
+                    Console.WriteLine($"Exception: {ex.Message}");
                 }
             }
 
             // Re-populate roles for the dropdown if model state is invalid
-            ViewData["Roles"] = new SelectList(new List<string> { "Admin", "Driver", "Enforcer" });
+            ViewData["Roles"] = new SelectList(new List<string> { "Admin", "Driver", "Enforcer" }, user.Role);
             TempData["ErrorMessage"] = "Please correct the errors in the form.";
             return View(user);
         }
 
 
-
-     
     }
 }

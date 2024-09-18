@@ -3,9 +3,6 @@
 @{
     ViewData["Title"] = "Edit User";
 }
- 
-
-<h1>User List</h1>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -20,13 +17,13 @@
         @TempData["ErrorMessage"]
     </div>
 }
+
 <h4>Edit User</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit" method="post">
             @Html.AntiForgeryToken()
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
 
             <div class="form-group">
@@ -34,8 +31,6 @@
                 <input asp-for="Username" class="form-control" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
-
-          
 
             <div class="form-group">
                 <label asp-for="Role" class="control-label"></label>
@@ -52,7 +47,6 @@
         </form>
     </div>
 </div>
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

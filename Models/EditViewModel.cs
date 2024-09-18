@@ -2,7 +2,7 @@
 
 namespace SingleTicketing.Models
 {
-    public class UpdateViewModel
+    public class EditViewModel
     {
         public int Id { get; set; }
         public required string Username { get; set; }
