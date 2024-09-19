@@ -1,22 +1,86 @@
+/* Base font size for the document */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
+/* Increase font size for larger screens */
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* Ensure there is space at the bottom of the body */
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    /* Flexbox to center content */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Full viewport height */
+}
+
+/* Focus and active states for buttons and form elements */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* Flex container for centering */
+.center-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1; /* Take up available space */
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+/* Card container */
+.card-container {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto; /* Center card horizontally */
+    background: #fff; /* White background for the card */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Card shadow */
+    padding: 20px; /* Padding inside the card */
+}
+
+/* Container for content */
+.container {
+    width: 100%;
+}
+
+/* Table styling */
+.table {
+    margin-top: 20px;
+}
+
+/* Button margin */
+.btn {
+    margin-right: 5px;
+}
+/* Customize Toastr success notifications */
+.toast-success {
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Customize Toastr error notifications */
+.toast-error {
+    background-color: #dc3545; /* Red background */
+    color: white; /* White text */
+    border-radius: 5px; /* Rounded corners */
+}
+
+/* Customize Toastr toast container */
+.toast-container {
+    top: 10px; /* Adjust top position */
+    right: 10px; /* Adjust right position */
 }

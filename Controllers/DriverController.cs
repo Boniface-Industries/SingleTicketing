@@ -9,6 +9,16 @@ namespace SingleTicketing.Controllers
             // Driver dashboard logic
             return View();
         }
+
+        public IActionResult Scan()
+        {
+            return View();
+        }
+
+        public IActionResult License()
+        {
+            return View();
+        }
         public IActionResult DriverDetails()
         {
             return View();

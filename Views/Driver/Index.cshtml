@@ -6,16 +6,19 @@
 
 <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
     <!-- Driver dashboard content -->
-    <button class="btn btn-primary btn-lg mb-3 w-100" style="max-width: 400px;">
+    <button onclick="location.href='@Url.Action("Scan", "Driver")'"
+            class="btn btn-primary btn-lg mb-3 w-100"
+            style="max-width: 400px; height: 100px;
+                   background-image: url('/images/QRscan.jpg');
+                   background-size: cover; background-position: center;
+                   color: white; border: none;">
         SCAN QR CODE
     </button>
-    <button class="btn btn-success btn-lg w-100" style="max-width: 400px;">
+    <button onclick="location.href='@Url.Action("License", "Driver")'" class="btn btn-success btn-lg w-100" style="max-width: 400px;">
         ENTER LICENSE ID IN HERE
     </button>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

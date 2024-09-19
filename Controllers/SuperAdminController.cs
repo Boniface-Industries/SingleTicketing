@@ -94,7 +94,7 @@ namespace SingleTicketing.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // If we get to this point, something went wrong, so redisplay the form.
+            // If we get to this point, something went wrong, so redisplay the form.    
             return View(model);
         }
 

@@ -1,62 +1,57 @@
 ﻿@model IEnumerable<SingleTicketing.Data.User>
 
-
 @{
     ViewData["Title"] = "User List";
 }
+<div class="center-wrapper">
+    <div class="container">
+        <h1>@ViewData["Title"]</h1>
+ 
+        <!-- Link to create a new user -->
+        <p>
+            <a class="btn btn-primary" asp-action="Create">Create New</a>
+        </p>
 
-<h1>User List</h1>
-
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
+        <!-- User list table -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Username)</th>
+                    <th>@Html.DisplayNameFor(model => model.PasswordHash)</th>
+                    <th>@Html.DisplayNameFor(model => model.Role)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Role)</td>
+                        <td>
+                            <a class="btn btn-info btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a class="btn btn-secondary btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-}
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Display success message if available
+        var successMessage = '@TempData["SuccessMessage"]';
+        if (successMessage) {
+            toastr.success(successMessage);
+        }
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
-}
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Username)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PasswordHash)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PasswordHash)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        // Display error message if available
+        var errorMessage = '@TempData["ErrorMessage"]';
+        if (errorMessage) {
+            toastr.error(errorMessage);
+        }
+    });
+</script>
