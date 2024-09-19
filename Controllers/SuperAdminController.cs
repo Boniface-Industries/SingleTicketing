@@ -1,18 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SingleTicketing.Data;
+using SingleTicketing.Helpers;
 using SingleTicketing.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SingleTicketing.Controllers
 {
     public class SuperAdminController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public SuperAdminController(MyDbContext context)
+        public SuperAdminController(MyDbContext context, IPasswordHasher<User> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         // GET: SuperAdmin/Index
@@ -66,22 +72,47 @@ namespace SingleTicketing.Controllers
             return View();
         }
 
+
         // POST: SuperAdmin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Username,PasswordHash,Role")] User user)
+        public async Task<IActionResult> Create(CreateUserViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var user = new User
+                {
+                    Username = model.Username,
+                    Role = model.Role,
+                    PasswordHash = HashPassword(model.Password) // Hash the password before saving
+                };
+
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+
                 TempData["SuccessMessage"] = "User created successfully.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+
+            // If we get to this point, something went wrong, so redisplay the form.
+            return View(model);
         }
 
-       
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (byte b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
+
         // GET: SuperAdmin/Details/5
         public async Task<IActionResult> Details(int id)
         {
@@ -97,7 +128,6 @@ namespace SingleTicketing.Controllers
         }
 
         // GET: SuperAdmin/Edit/5
-        // GET: SuperAdmin/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -106,19 +136,29 @@ namespace SingleTicketing.Controllers
                 return NotFound();
             }
 
-            // Prepare roles for the dropdown
-            ViewBag.Roles = new SelectList(new List<string> { "Admin", "Driver", "Enforcer" }, user.Role);
+            var model = new EditViewModel
+            {
+                Id = user.Id,
+                Username = user.Username,
+                PasswordHash = user.PasswordHash, 
+                Role = user.Role,
+                Roles = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Admin", Text = "Admin" },
+                new SelectListItem { Value = "Driver", Text = "Driver" },
+                new SelectListItem { Value = "Enforcer", Text = "Enforcer" }
+            }
+            };
 
-            return View(user);
+            return View(model);
         }
 
 
-        // POST: SuperAdmin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Role")] User user)
+        public async Task<IActionResult> Edit(int id, EditViewModel model)
         {
-            if (id != user.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
@@ -133,9 +173,22 @@ namespace SingleTicketing.Controllers
                         return NotFound();
                     }
 
-                    // Update only the relevant fields
-                    existingUser.Username = user.Username;
-                    existingUser.Role = user.Role;
+                    // Update only the relevant fields if they are not null
+                    if (!string.IsNullOrEmpty(model.Username))
+                    {
+                        existingUser.Username = model.Username;
+                    }
+
+                    if (!string.IsNullOrEmpty(model.PasswordHash))
+                    {
+                        // Hash the password
+                        existingUser.PasswordHash = _passwordHasher.HashPassword(existingUser, model.PasswordHash);
+                    }
+
+                    if (!string.IsNullOrEmpty(model.Role))
+                    {
+                        existingUser.Role = model.Role;
+                    }
 
                     _context.Update(existingUser);
                     await _context.SaveChangesAsync();
@@ -156,10 +209,18 @@ namespace SingleTicketing.Controllers
             }
 
             // Re-populate roles for the dropdown if model state is invalid
-            ViewData["Roles"] = new SelectList(new List<string> { "Admin", "Driver", "Enforcer" }, user.Role);
+            model.Roles = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Admin", Text = "Admin" },
+        new SelectListItem { Value = "Driver", Text = "Driver" },
+        new SelectListItem { Value = "Enforcer", Text = "Enforcer" }
+    };
+
             TempData["ErrorMessage"] = "Please correct the errors in the form.";
-            return View(user);
+            return View(model);
         }
+
+
 
 
     }

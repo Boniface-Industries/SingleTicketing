@@ -1,2 +1,21 @@
-﻿<h2>Driver Dashboard</h2>
-<!-- Driver dashboard content -->
+﻿@{
+    ViewData["Title"] = "Driver Dashboard";
+}
+
+<h2 class="text-center mb-4">Driver Dashboard</h2>
+
+<div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
+    <!-- Driver dashboard content -->
+    <button class="btn btn-primary btn-lg mb-3 w-100" style="max-width: 400px;">
+        SCAN QR CODE
+    </button>
+    <button class="btn btn-success btn-lg w-100" style="max-width: 400px;">
+        ENTER LICENSE ID IN HERE
+    </button>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
