@@ -6,52 +6,70 @@
 <div class="center-wrapper">
     <div class="container">
         <h1>@ViewData["Title"]</h1>
- 
+
         <!-- Link to create a new user -->
         <p>
             <a class="btn btn-primary" asp-action="Create">Create New</a>
         </p>
 
-        <!-- User list table -->
-        <table class="table table-striped">
+        <!-- User list table with hover and click functionality -->
+        <table class="table table-hover table-striped" id="userTable">
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.Username)</th>
                     <th>@Html.DisplayNameFor(model => model.PasswordHash)</th>
                     <th>@Html.DisplayNameFor(model => model.Role)</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
+                    <tr data-user-id="@item.Id" class="clickable-row" data-username="@item.Username" data-role="@item.Role">
                         <td>@Html.DisplayFor(modelItem => item.Username)</td>
                         <td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>
                         <td>@Html.DisplayFor(modelItem => item.Role)</td>
-                        <td>
-                            <a class="btn btn-info btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a class="btn btn-secondary btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">User Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="userDetails"></p>
+                <a id="editLink" class="btn btn-primary" href="#">Edit</a>
+                <a id="deleteLink" class="btn btn-danger" href="#">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Display success message if available
-        var successMessage = '@TempData["SuccessMessage"]';
-        if (successMessage) {
-            toastr.success(successMessage);
-        }
+        // Handle click event for each table row
+        document.querySelectorAll('.clickable-row').forEach(row => {
+            row.addEventListener('click', function () {
+                const userId = this.getAttribute('data-user-id');
+                const username = this.getAttribute('data-username');
+                const role = this.getAttribute('data-role');
 
-        // Display error message if available
-        var errorMessage = '@TempData["ErrorMessage"]';
-        if (errorMessage) {
-            toastr.error(errorMessage);
-        }
+                // Populate the modal with the clicked user details
+                document.getElementById('userDetails').innerText = `Username: ${username}\nRole: ${role}`;
+                document.getElementById('editLink').setAttribute('href', `/SuperAdmin/Edit/${userId}`);
+                document.getElementById('deleteLink').setAttribute('href', `/SuperAdmin/Delete/${userId}`);
+
+                // Show the modal
+                var modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+                modal.show();
+            });
+        });
     });
 </script>

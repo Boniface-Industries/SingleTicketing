@@ -84,7 +84,7 @@ namespace SingleTicketing.Controllers
                 {
                     Username = model.Username,
                     Role = model.Role,
-                    PasswordHash = HashPassword(model.Password) // Hash the password before saving
+                    PasswordHash = HashPassword(model.PasswordHash) // Hash the password before saving
                 };
 
                 _context.Add(user);
