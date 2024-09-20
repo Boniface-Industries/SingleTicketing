@@ -8,7 +8,9 @@ namespace SingleTicketing.Models
         public string? Username { get; set; }
 
         public string? PasswordHash { get; set; }
-        public string? Role { get; set; }
+        public string? RoleName { get; set; }
         public IEnumerable<SelectListItem>? Roles { get; set; }
+
+        public string? StatusName { get; set; }
     }
 }

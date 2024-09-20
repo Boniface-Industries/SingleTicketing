@@ -72,7 +72,6 @@ namespace SingleTicketing.Controllers
             return View();
         }
 
-
         // POST: SuperAdmin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -80,15 +79,24 @@ namespace SingleTicketing.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Create a new user instance
                 var user = new User
                 {
                     Username = model.Username,
-                    Role = model.Role,
-                    PasswordHash = HashPassword(model.PasswordHash) // Hash the password before saving
+                    RoleName = model.RoleName,   // Ensure RoleName is assigned
+                    StatusName = model.StatusName, // Ensure StatusName is assigned
+                    PasswordHash = HashPassword(model.PasswordHash)
                 };
 
+
+                // Add the user to the database context
                 _context.Add(user);
+
+                // Save changes to the database
                 await _context.SaveChangesAsync();
+
+                // Optional: Assign the user to a role if you're using roles in your application
+                // You might need to handle role management in a different service
 
                 TempData["SuccessMessage"] = "User created successfully.";
                 return RedirectToAction(nameof(Index));
@@ -98,6 +106,7 @@ namespace SingleTicketing.Controllers
             return View(model);
         }
 
+        // Password hashing method
         private string HashPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -106,11 +115,12 @@ namespace SingleTicketing.Controllers
                 StringBuilder builder = new StringBuilder();
                 foreach (byte b in bytes)
                 {
-                    builder.Append(b.ToString("x2"));
+                    builder.Append(b.ToString("x2")); // Convert byte to hex string
                 }
                 return builder.ToString();
             }
         }
+
 
 
         // GET: SuperAdmin/Details/5
@@ -141,7 +151,8 @@ namespace SingleTicketing.Controllers
                 Id = user.Id,
                 Username = user.Username,
                 PasswordHash = user.PasswordHash, 
-                Role = user.Role,
+                RoleName = user.RoleName,
+                StatusName = user.StatusName,
                 Roles = new List<SelectListItem>
             {
                 new SelectListItem { Value = "Admin", Text = "Admin" },
@@ -185,9 +196,15 @@ namespace SingleTicketing.Controllers
                         existingUser.PasswordHash = _passwordHasher.HashPassword(existingUser, model.PasswordHash);
                     }
 
-                    if (!string.IsNullOrEmpty(model.Role))
+                    if (!string.IsNullOrEmpty(model.RoleName))
                     {
-                        existingUser.Role = model.Role;
+                        existingUser.RoleName = model.RoleName;
+                    }
+
+
+                    if (!string.IsNullOrEmpty(model.StatusName))
+                    {
+                        existingUser.StatusName = model.StatusName;
                     }
 
                     _context.Update(existingUser);

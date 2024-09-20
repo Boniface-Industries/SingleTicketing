@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SingleTicketing.Data;
-using SingleTicketing.Services;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,7 +11,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
                      new MySqlServerVersion(new Version(8, 0, 21))));
-builder.Services.AddTransient<UserService>();
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>(); // R
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>

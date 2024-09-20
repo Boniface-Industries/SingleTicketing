@@ -37,13 +37,13 @@ namespace SingleTicketing.Controllers
             }
 
             // Set role and username in session
-            HttpContext.Session.SetString("UserRole", user.Role);
+            HttpContext.Session.SetString("UserRole", user.RoleName);
             HttpContext.Session.SetString("Username", user.Username);
 
             TempData["SuccessMessage"] = "Login successful!";
 
             // Redirect based on role
-            return user.Role switch
+            return user.RoleName switch
             {
                 "SuperAdmin" => RedirectToAction("Index", "SuperAdmin"),
                 "Admin" => RedirectToAction("Index", "Admin"),
