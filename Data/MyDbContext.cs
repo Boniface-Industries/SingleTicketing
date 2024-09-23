@@ -11,8 +11,14 @@ namespace SingleTicketing.Data
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
+        public DbSet<Enforcer> Enforcers { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Violation> Violations { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

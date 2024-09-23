@@ -2,8 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SingleTicketing.Data;
 using SingleTicketing.Models;
-using System.Security.Cryptography;
-using System.Text;
+using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 namespace SingleTicketing.Controllers
@@ -11,10 +10,12 @@ namespace SingleTicketing.Controllers
     public class AccountController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public AccountController(MyDbContext context)
+        public AccountController(MyDbContext context, IPasswordHasher<User> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
 
         // GET: /Account/Login
@@ -30,7 +31,7 @@ namespace SingleTicketing.Controllers
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == model.Username);
 
-            if (user == null || !VerifyPassword(model.Password, user.PasswordHash))
+            if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password) == PasswordVerificationResult.Failed)
             {
                 TempData["ErrorMessage"] = "Invalid login attempt.";
                 return View(model);
@@ -45,27 +46,12 @@ namespace SingleTicketing.Controllers
             // Redirect based on role
             return user.RoleName switch
             {
-                "SuperAdmin" => RedirectToAction("Index", "SuperAdmin"),
+                "SuperAdmin" => RedirectToAction("Home", "SuperAdmin"),
                 "Admin" => RedirectToAction("Index", "Admin"),
                 "Driver" => RedirectToAction("Index", "Driver"),
                 "Enforcer" => RedirectToAction("Index", "Enforcer"),
                 _ => RedirectToAction("Index", "Home"),
             };
-        }
-
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(bytes);
-            }
-        }
-
-        private bool VerifyPassword(string enteredPassword, string storedHash)
-        {
-            var hash = HashPassword(enteredPassword);
-            return hash == storedHash;
         }
     }
 }

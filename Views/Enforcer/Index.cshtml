@@ -1,2 +1,14 @@
-﻿<h2>Enforcer Dashboard</h2>
-<!-- Enforcer dashboard content -->
+﻿@Html.Partial("_EnforcerSidebar.cshtml") 
+@* Views/Enforcer/Index.cshtml *@
+@{
+    ViewData["Title"] = "Enforcer Dashboard";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (ViewBag.WelcomeMessage != null)
+{
+    <h2>@ViewBag.WelcomeMessage</h2>
+}
+
+<p>Your content goes here...</p>

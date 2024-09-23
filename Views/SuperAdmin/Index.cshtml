@@ -1,39 +1,56 @@
 ﻿@model IEnumerable<SingleTicketing.Data.User>
-
+@Html.Partial("_SuperAdminSidebar.cshtml")
 @{
     ViewData["Title"] = "User List";
 }
-<div class="center-wrapper">
-    <div class="container">
-        <h1>@ViewData["Title"]</h1>
 
-        <!-- Link to create a new user -->
-        <p>
-            <a class="btn btn-primary" asp-action="Create">Create New</a>
-        </p>
+<div class="center-wrapper my-5">
+    <div class="container">
+        <h1 class="mb-4">@ViewData["Title"]</h1>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- Link to create a new user -->
+            <p>
+                <a class="btn btn-primary" asp-action="Create">Create New</a>
+            </p>
+            <p> <a asp-action="Index" asp-controller="Role" class="btn btn-primary">View Roles</a>   </p>
+
+        </div>
 
         <!-- User list table with hover and click functionality -->
-        <table class="table table-hover table-striped" id="userTable">
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.Username)</th>
-                    <th>@Html.DisplayNameFor(model => model.PasswordHash)</th>
-                    <th>@Html.DisplayNameFor(model => model.Role)</th>
-                    <th>@Html.DisplayNameFor(model => model.Status)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr data-user-id="@item.Id" class="clickable-row" data-username="@item.Username" data-role="@item.Role">
-                        <td>@Html.DisplayFor(modelItem => item.Username)</td>
-                        <td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Role)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Status)</td>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="userTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                       
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <!-- Make the entire row clickable -->
+                        <tr class="clickable-row" data-user-id="@item.Id" data-username="@item.Username" data-role="@item.RoleName">
+                            <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>
+                            <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StatusName)</td>
+                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -47,8 +64,11 @@
             </div>
             <div class="modal-body">
                 <p id="userDetails"></p>
-                <a id="editLink" class="btn btn-primary" href="#">Edit</a>
-                <a id="deleteLink" class="btn btn-danger" href="#">Delete</a>
+                <!-- Action buttons moved inside the modal -->
+                <div class="d-flex justify-content-between">
+                    <a id="editLink" class="btn btn-warning" href="#">Edit</a>
+                    <a id="deleteLink" class="btn btn-danger" href="#">Delete</a>
+                </div>
             </div>
         </div>
     </div>
@@ -56,14 +76,14 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Handle click event for each table row
+        // Make each row clickable and show the modal on row click
         document.querySelectorAll('.clickable-row').forEach(row => {
             row.addEventListener('click', function () {
                 const userId = this.getAttribute('data-user-id');
                 const username = this.getAttribute('data-username');
                 const role = this.getAttribute('data-role');
 
-                // Populate the modal with the clicked user details
+                // Populate modal with user details
                 document.getElementById('userDetails').innerText = `Username: ${username}\nRole: ${role}`;
                 document.getElementById('editLink').setAttribute('href', `/SuperAdmin/Edit/${userId}`);
                 document.getElementById('deleteLink').setAttribute('href', `/SuperAdmin/Delete/${userId}`);

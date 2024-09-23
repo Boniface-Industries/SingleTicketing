@@ -20,7 +20,11 @@ namespace SingleTicketing.Controllers
             _context = context;
             _passwordHasher = passwordHasher;
         }
-
+        public IActionResult Home()
+        {
+            // Driver dashboard logic
+            return View();
+        }
         // GET: SuperAdmin/Index
         public IActionResult Index()
         {
@@ -66,12 +70,14 @@ namespace SingleTicketing.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: SuperAdmin/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var viewModel = new CreateUserViewModel
+            {
+                AvailableRoles = await _context.Roles.Select(r => r.RoleName).ToListAsync()
+            };
+            return View(viewModel);
         }
-
         // POST: SuperAdmin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -79,15 +85,14 @@ namespace SingleTicketing.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Create a new user instance
+                // Create a new user instance with PasswordHash set in the initializer
                 var user = new User
                 {
                     Username = model.Username,
-                    RoleName = model.RoleName,   // Ensure RoleName is assigned
-                    StatusName = model.StatusName, // Ensure StatusName is assigned
-                    PasswordHash = HashPassword(model.PasswordHash)
+                    RoleName = model.RoleName,
+                    StatusName = model.StatusName,
+                    PasswordHash = _passwordHasher.HashPassword(null, model.PasswordHash) // Hash the password here
                 };
-
 
                 // Add the user to the database context
                 _context.Add(user);
@@ -95,33 +100,14 @@ namespace SingleTicketing.Controllers
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                // Optional: Assign the user to a role if you're using roles in your application
-                // You might need to handle role management in a different service
-
                 TempData["SuccessMessage"] = "User created successfully.";
                 return RedirectToAction(nameof(Index));
             }
 
+            model.AvailableRoles = await _context.Roles.Select(r => r.RoleName).ToListAsync();
             // If we get to this point, something went wrong, so redisplay the form.    
             return View(model);
         }
-
-        // Password hashing method
-        private string HashPassword(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                StringBuilder builder = new StringBuilder();
-                foreach (byte b in bytes)
-                {
-                    builder.Append(b.ToString("x2")); // Convert byte to hex string
-                }
-                return builder.ToString();
-            }
-        }
-
-
 
         // GET: SuperAdmin/Details/5
         public async Task<IActionResult> Details(int id)

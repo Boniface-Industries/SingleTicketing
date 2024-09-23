@@ -1,0 +1,22 @@
+﻿@model SingleTicketing.Models.CreateRoleViewModel
+@Html.Partial("_RoleSidebar.cshtml")
+@{
+    ViewData["Title"] = "Create Role";
+}
+
+<h1>Create Role</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="RoleName" class="control-label"></label>
+        <input asp-for="RoleName" class="form-control" />
+        <span asp-validation-for="RoleName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

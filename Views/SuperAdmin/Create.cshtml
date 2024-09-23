@@ -1,5 +1,5 @@
 ﻿@model SingleTicketing.Models.CreateUserViewModel
-
+@Html.Partial("_SuperAdminSidebar.cshtml")
 <h4>User</h4>
 <hr />
 <div class="row">
@@ -18,9 +18,26 @@
             </div>
             <div class="form-group">
                 <label asp-for="RoleName" class="control-label"></label>
-                <input asp-for="RoleName" class="form-control" />
+                <select asp-for="RoleName" class="form-control">
+                    @foreach (var role in Model.AvailableRoles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </select>
                 <span asp-validation-for="RoleName" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="StatusName" class="control-label"></label>
+                <select asp-for="StatusName" class="form-control">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Disabled">Disabled</option>
+                    <option value="Suspended">Suspended</option>
+                </select>
+                <span asp-validation-for="StatusName" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

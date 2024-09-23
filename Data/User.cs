@@ -11,7 +11,7 @@
         public Role? Role { get; set; }  // Optional navigation property
 
         // Status Reference
-        public required string StatusName { get; set; }  // Reference to StatusName from the Status table
+        public string? StatusName { get; set; }  // Reference to StatusName from the Status table
         public Status? Status { get; set; }  // Optional navigation property
     }
 }
