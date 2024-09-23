@@ -7,9 +7,7 @@
 
         public required string UserName { get; set; }
 
-        public required string Password { get; set; }
-
-        public string? DriverName { get; set; }
+        public string? FullName { get; set; }
 
         public string? LicenseNumber { get; set; }
 
@@ -26,5 +24,6 @@
         public int? Demerit {  get; set; }
 
         public string? Email { get; set; }
+
     }
 }

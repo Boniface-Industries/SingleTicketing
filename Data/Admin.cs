@@ -9,10 +9,11 @@
 
         public string? FullName { get; set; }
 
-        public required string Password { get; set; }
 
         public string? Access_Level { get; set; }
 
         public string? Email { get; set; }
+
+        public string? Status { get; set; }
     }
 }

@@ -1551,3 +1551,25 @@ section,
 .starter-section {
     /* Add your styles here */
 }
+.background-animation {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff, #e63946, #f1faee, #8e2de2, #ff6f61);
+    background-size: 400% 400%; /* Adjusted for a smoother transition */
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    50% {
+        background-position: 100% 100%;
+    }
+
+    100% {
+        background-position: 0% 0%;
+    }
+}

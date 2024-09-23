@@ -26,49 +26,66 @@ namespace SingleTicketing.Controllers
             return View();
         }
         // GET: SuperAdmin/Index
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
             try
             {
-                var users = _context.Users.ToList();
-                return View(users);
+                // Get total number of users
+                var totalUsers = _context.Users.Count();
+
+                // Calculate the users to retrieve for the current page
+                var users = _context.Users
+                    .Skip((page - 1) * pageSize)  // Skip users from previous pages
+                    .Take(pageSize)                // Take the specified number of users
+                    .ToList();
+
+                // Create a model to pass to the view that includes users and pagination info
+                var model = new UserListViewModel
+                {
+                    Users = users,
+                    CurrentPage = page,
+                    TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize)
+                };
+
+                return View(model);
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "An error occurred while fetching the users.";
-                return View(new List<User>()); // Return an empty list to avoid null reference
+                return View(new UserListViewModel { Users = new List<User>() }); // Return an empty list to avoid null reference
             }
         }
 
-        // GET: SuperAdmin/Delete/5
-        public async Task<IActionResult> Delete(int id)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+        //// GET: SuperAdmin/Delete/5
+        //public async Task<IActionResult> Delete(int id)
+        //{
+        //    var user = await _context.Users
+        //        .FirstOrDefaultAsync(m => m.Id == id);
 
-            return View(user);
-        }
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-        // POST: SuperAdmin/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
-            }
+        //    return View(user);
+        //}
 
-            TempData["SuccessMessage"] = "User deleted successfully.";
-            return RedirectToAction(nameof(Index));
-        }
+        //// POST: SuperAdmin/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var user = await _context.Users.FindAsync(id);
+        //    if (user != null)
+        //    {
+        //        _context.Users.Remove(user);
+        //        await _context.SaveChangesAsync();
+        //    }
+
+        //    TempData["SuccessMessage"] = "User deleted successfully.";
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         public async Task<IActionResult> Create()
         {
@@ -139,15 +156,30 @@ namespace SingleTicketing.Controllers
                 PasswordHash = user.PasswordHash, 
                 RoleName = user.RoleName,
                 StatusName = user.StatusName,
-                Roles = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "Admin", Text = "Admin" },
-                new SelectListItem { Value = "Driver", Text = "Driver" },
-                new SelectListItem { Value = "Enforcer", Text = "Enforcer" }
-            }
+
+                AvailableRoles = await _context.Roles.Select(r => r.RoleName).ToListAsync()
             };
 
             return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ConfirmLoginConfirmed(ConfirmationViewModel model)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == model.Username);
+
+            if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password) == PasswordVerificationResult.Failed)
+            {
+                TempData["ErrorMessage"] = "Invalid login attempt.";
+                return RedirectToAction("Index", "SuperAdmin");
+            }
+
+            // Set role and username in session
+            HttpContext.Session.SetString("UserRole", user.RoleName);
+            HttpContext.Session.SetString("Username", user.Username);
+
+            TempData["SuccessMessage"] = "Login successful!";
+            return RedirectToAction("Edit", "SuperAdmin", new { id = user.Id });
         }
 
 
@@ -210,14 +242,8 @@ namespace SingleTicketing.Controllers
                     Console.WriteLine($"Exception: {ex.Message}");
                 }
             }
-
-            // Re-populate roles for the dropdown if model state is invalid
-            model.Roles = new List<SelectListItem>
-    {
-        new SelectListItem { Value = "Admin", Text = "Admin" },
-        new SelectListItem { Value = "Driver", Text = "Driver" },
-        new SelectListItem { Value = "Enforcer", Text = "Enforcer" }
-    };
+ 
+ 
 
             TempData["ErrorMessage"] = "Please correct the errors in the form.";
             return View(model);

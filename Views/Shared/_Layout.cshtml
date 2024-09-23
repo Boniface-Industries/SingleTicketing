@@ -20,24 +20,35 @@
       @RenderSection("Styles", required: false)
 </head>
 <body>
-     <header>
+    <header>
         <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SingleTicketing</a>
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/etcit.jpg" alt="Logo" class="img-fluid" style="max-width: 50px; height: auto; margin-right: 8px;">
+                    <h1 class="mb-0">SingleTicketing</h1> <!-- Remove margin-bottom from h1 -->
+                </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <!-- Left aligned navigation links -->
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                     
                     </ul>
+
                     <!-- Right aligned login link -->
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door-fill fs-3"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
+                                <i class="bi bi-door-open fs-3"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -45,7 +56,7 @@
         </nav>
     </header>
 
-    <div class="background-animation">
+    <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

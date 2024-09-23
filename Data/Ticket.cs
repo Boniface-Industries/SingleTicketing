@@ -34,5 +34,7 @@ namespace SingleTicketing.Data
         public DateTime? Amount_Due { get; set; }
 
         public DateTime? Date_Issued { get; set;}
+
+        public string? Status { get; set; }
     }
 }

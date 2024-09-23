@@ -3,12 +3,13 @@
 
     <nav id="navmenu" class="navmenu">
         <ul>
-            <li><a asp-controller="SuperAdmin" asp-action="Home" class="active"><i class="bi bi-house navicon"></i><span>Home</span></a></li>
+            <li><a asp-controller="SuperAdmin" asp-action="Home"><i class="bi bi-house navicon"></i><span>Home</span></a></li>
             <li><a asp-controller="Role" asp-action="Index"><i class="bi bi-person-workspace"></i><span>Roles</span></a></li>
-            <li><a asp-controller="#" asp-action="#"><i class="bi bi-activity"></i><span>Status</span></a></li>
+            <li><a asp-controller="#" asp-action="#"><i class="bi bi-shield-check"></i><span>Status</span></a></li>
             <li><a asp-controller="SuperAdmin" asp-action="Create"><i class="bi bi-person-add"></i><span>Create User</span></a></li>
             <li><a asp-controller="SuperAdmin" asp-action="Index"><i class="bi bi-person-gear"></i><span>Edit User</span></a></li>
             <li><a asp-controller="SuperAdmin" asp-action="Audit"><i class="bi bi-person-lines-fill"></i><span>Audit Trail</span></a></li>
+            <li><a asp-controller="SuperAdmin" asp-action="Audit"><i class="bi bi-activity"></i><span>User Activites</span></a></li>
         </ul>
     </nav>
 </header>
