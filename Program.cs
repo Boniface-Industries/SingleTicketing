@@ -24,6 +24,21 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        DriverSeeder.SeedDrivers(services);
+    }
+    catch (Exception ex)
+    {
+        // Handle exceptions (e.g., log error)
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

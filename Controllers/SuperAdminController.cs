@@ -29,17 +29,25 @@ namespace SingleTicketing.Controllers
             return View();
         }
         // GET: SuperAdmin/Index
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
             try
             {
-                // Retrieve all users from the database
-                var users = _context.Users.ToList();
+                // Get total number of users
+                var totalUsers = _context.Users.Count();
 
-                // Create a model to pass to the view that includes users
+                // Calculate the users to retrieve for the current page
+                var users = _context.Users
+                    .Skip((page - 1) * pageSize)  // Skip users from previous pages
+                    .Take(pageSize)                // Take the specified number of users
+                    .ToList();
+
+                // Create a model to pass to the view that includes users and pagination info
                 var model = new UserListViewModel
                 {
-                    Users = users
+                    Users = users,
+                    CurrentPage = page,
+                    TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize)
                 };
 
                 return View(model);
@@ -50,8 +58,6 @@ namespace SingleTicketing.Controllers
                 return View(new UserListViewModel { Users = new List<User>() }); // Return an empty list to avoid null reference
             }
         }
-
-
 
         //// GET: SuperAdmin/Delete/5
         //public async Task<IActionResult> Delete(int id)
