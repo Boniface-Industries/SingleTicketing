@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SingleTicketing.Data;
+using SingleTicketing.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Logging.AddConsole();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MyDbContext>(options =>
@@ -33,10 +35,10 @@ app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

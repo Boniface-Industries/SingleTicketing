@@ -25,123 +25,79 @@
                         <thead class="table-dark">
                             <tr>
                                 <th>Username</th>
-                                <th>Password</th>
                                 <th>Role</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model.Users)   
+                            @foreach (var user in Model.Users)
                             {
-                                <tr class="clickable-row" data-user-id="@item.Id" data-username="@item.Username" data-role="@item.RoleName">
-                                    <td>@Html.DisplayFor(modelItem => item.Username)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.PasswordHash)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.RoleName)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.StatusName)</td>
+                                <tr>
+                                    <td>@user.Username</td>
+                                    <td>@user.RoleName</td>
+                                    <td>@user.StatusName</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary"
+                                                data-bs-toggle="modal" data-bs-target="#passwordModal"
+                                                onclick="setUserForEdit(@user.Id)">
+                                            Edit User
+                                        </button>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Pagination -->
-                <nav aria-label="User Pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
-                        </li>
-                        @for (int i = 1; i <= Model.TotalPages; i++)
-                        {
-                            <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
-                                <a class="page-link" href="?page=@i">@i</a>
-                            </li>
-                        }
-                        <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                            <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
     </div>
 </div>
 
-<!-- User Details Modal -->
-<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailsModalLabel">User Details</h5>
+                <h5 class="modal-title" id="passwordModalLabel">Enter Password to Continue</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="userDetails"></p>
-                <div class="d-flex justify-content-between">
-                    <a id="editLink" class="btn btn-warning" href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal">Edit</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Confirmation Modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmationModalLabel">Confirm Login</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Please log in again to confirm your action.</p>
-
-                @Html.Partial("_ConfirmationPartial", new SingleTicketing.Models.ConfirmationViewModel
-           {
-               Username = string.Empty,
-               Password = string.Empty
-           })
+                <input type="password" id="passwordInput" class="form-control" placeholder="Enter your password..." />
+                <input type="hidden" id="userId" /> <!-- Hidden input to store User ID -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmEditButton">Confirm</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Make each row clickable and show the modal on row click
-        document.querySelectorAll('.clickable-row').forEach(row => {
-            row.addEventListener('click', function () {
-                const userId = this.getAttribute('data-user-id');
-                const username = this.getAttribute('data-username');
-                const role = this.getAttribute('data-role');
+    function setUserForEdit(userId) {
+        document.getElementById('userId').value = userId; // Store selected userId in the hidden field
+    }
 
-                // Populate modal with user details
-                document.getElementById('userDetails').innerText = `Username: ${username}\nRole: ${role}`;
-                document.getElementById('editLink').setAttribute('data-user-id', userId);
-                
-                // Show the details modal
-                var modal = new bootstrap.Modal(document.getElementById('detailsModal'));
-                modal.show();
-            });
+    document.getElementById('confirmEditButton').addEventListener('click', async function () {
+        const password = document.getElementById('passwordInput').value;
+        const userId = document.getElementById('userId').value; // Get the stored selected userId
+
+        const response = await fetch(`/SuperAdmin/ValidatePassword`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '@Html.AntiForgeryToken()' // Include CSRF token
+            },
+            body: JSON.stringify({ password: password }) // Send only the password, no userId
         });
 
-        // Set the confirmation link for editing
-        document.getElementById('confirmEditLink').addEventListener('click', function () {
-            const userId = document.getElementById('editLink').getAttribute('data-user-id');
-            this.setAttribute('href', `/SuperAdmin/Edit/${userId}`);
-        });
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('keyup', function () {
-            const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#userTable tbody tr');
-
-            rows.forEach(row => {
-                const username = row.querySelector('td:first-child').textContent.toLowerCase();
-                row.style.display = username.includes(filter) ? '' : 'none';
-            });
-        });
+        if (response.ok) {
+            window.location.href = `/SuperAdmin/Edit/${userId}`; // Redirect to Edit page for the selected user
+        } else {
+            alert('Invalid password. Please try again.');
+        }
     });
 </script>
+
+

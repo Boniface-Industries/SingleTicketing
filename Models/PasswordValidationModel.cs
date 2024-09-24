@@ -1,8 +1,7 @@
 ﻿namespace SingleTicketing.Models
 {
-    public class ConfirmationViewModel
+    public class PasswordValidationModel
     {
-        public required string Username { get; set; }
         public required string Password { get; set; }
     }
 

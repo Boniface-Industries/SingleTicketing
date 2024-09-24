@@ -3,20 +3,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SingleTicketing.Data;
-using SingleTicketing.Helpers;
+using SingleTicketing.Services;
 using SingleTicketing.Models;
 using System.Security.Cryptography;
 using System.Text;
+using System.Security.Claims;
 
 namespace SingleTicketing.Controllers
 {
     public class SuperAdminController : Controller
     {
+        private readonly IUserService _userService;
         private readonly MyDbContext _context;
         private readonly IPasswordHasher<User> _passwordHasher;
 
-        public SuperAdminController(MyDbContext context, IPasswordHasher<User> passwordHasher)
+        public SuperAdminController(MyDbContext context, IPasswordHasher<User> passwordHasher, IUserService userService)
         {
+            _userService = userService;
             _context = context;
             _passwordHasher = passwordHasher;
         }
@@ -26,25 +29,17 @@ namespace SingleTicketing.Controllers
             return View();
         }
         // GET: SuperAdmin/Index
-        public IActionResult Index(int page = 1, int pageSize = 10)
+        public IActionResult Index()
         {
             try
             {
-                // Get total number of users
-                var totalUsers = _context.Users.Count();
+                // Retrieve all users from the database
+                var users = _context.Users.ToList();
 
-                // Calculate the users to retrieve for the current page
-                var users = _context.Users
-                    .Skip((page - 1) * pageSize)  // Skip users from previous pages
-                    .Take(pageSize)                // Take the specified number of users
-                    .ToList();
-
-                // Create a model to pass to the view that includes users and pagination info
+                // Create a model to pass to the view that includes users
                 var model = new UserListViewModel
                 {
-                    Users = users,
-                    CurrentPage = page,
-                    TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize)
+                    Users = users
                 };
 
                 return View(model);
@@ -55,6 +50,7 @@ namespace SingleTicketing.Controllers
                 return View(new UserListViewModel { Users = new List<User>() }); // Return an empty list to avoid null reference
             }
         }
+
 
 
         //// GET: SuperAdmin/Delete/5
@@ -143,6 +139,7 @@ namespace SingleTicketing.Controllers
         // GET: SuperAdmin/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
@@ -162,26 +159,6 @@ namespace SingleTicketing.Controllers
 
             return View(model);
         }
-        [HttpPost]
-        public async Task<IActionResult> ConfirmLoginConfirmed(ConfirmationViewModel model)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == model.Username);
-
-            if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password) == PasswordVerificationResult.Failed)
-            {
-                TempData["ErrorMessage"] = "Invalid login attempt.";
-                return RedirectToAction("Index", "SuperAdmin");
-            }
-
-            // Set role and username in session
-            HttpContext.Session.SetString("UserRole", user.RoleName);
-            HttpContext.Session.SetString("Username", user.Username);
-
-            TempData["SuccessMessage"] = "Login successful!";
-            return RedirectToAction("Edit", "SuperAdmin", new { id = user.Id });
-        }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -249,8 +226,49 @@ namespace SingleTicketing.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ValidatePassword([FromBody] PasswordValidationModel model)
+        {
+            // Retrieve the logged-in user's ID from session
+            var loggedInUserIdString = HttpContext.Session.GetString("LoggedInUserId");
+
+            if (string.IsNullOrEmpty(loggedInUserIdString))
+            {
+                return Unauthorized(); // Session expired or not logged in
+            }
+
+            // Convert the session ID to an integer
+            if (!int.TryParse(loggedInUserIdString, out int loggedInUserId))
+            {
+                return BadRequest("Invalid session User ID");
+            }
+
+            // Fetch the logged-in user from the database
+            var loggedInUser = await _context.Users.FindAsync(loggedInUserId);
+            if (loggedInUser == null)
+            {
+                return Unauthorized(); // User not found
+            }
+
+            // Verify the password for the logged-in user
+            var verificationResult = _passwordHasher.VerifyHashedPassword(loggedInUser, loggedInUser.PasswordHash, model.Password);
+
+            if (verificationResult == PasswordVerificationResult.Success)
+            {
+                // Password is correct, allow the editing process to continue
+                return Ok(); // You can include any necessary data if needed
+            }
+            else
+            {
+                return Unauthorized(); // Password is incorrect
+            }
+        }
+
 
 
 
     }
+
+
 }
+

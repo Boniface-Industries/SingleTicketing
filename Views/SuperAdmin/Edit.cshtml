@@ -11,6 +11,9 @@
         </div>
         <div class="card-body">
             <form asp-action="Edit">
+                <!-- Include the UserId as a hidden field -->
+                <input type="hidden" asp-for="UserId" />
+
                 <div class="form-group mb-3">
                     <label asp-for="Username" class="control-label"></label>
                     <input asp-for="Username" class="form-control" />
@@ -23,7 +26,7 @@
                     <span asp-validation-for="PasswordHash" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="RoleName" class="control-label"></label>
                     <select asp-for="RoleName" class="form-control">
                         @foreach (var role in Model.AvailableRoles)
@@ -33,6 +36,7 @@
                     </select>
                     <span asp-validation-for="RoleName" class="text-danger"></span>
                 </div>
+
                 <div class="form-group mb-3">
                     <label asp-for="StatusName" class="control-label"></label>
                     <select asp-for="StatusName" class="form-control">
@@ -43,7 +47,6 @@
                     </select>
                     <span asp-validation-for="StatusName" class="text-danger"></span>
                 </div>
-
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">Save</button>

@@ -31,11 +31,25 @@ namespace SingleTicketing.Controllers
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == model.Username);
 
-            if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password) == PasswordVerificationResult.Failed)
+            if (user == null)
             {
                 TempData["ErrorMessage"] = "Invalid login attempt.";
                 return View(model);
             }
+
+            // Debug output
+            System.Diagnostics.Debug.WriteLine($"Verifying password for user: {user.Username}");
+
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
+
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
+            {
+                TempData["ErrorMessage"] = "Invalid login attempt.";
+                return View(model);
+            }
+
+            // Password is correct, now set the session for the logged-in user
+            HttpContext.Session.SetString("LoggedInUserId", user.Id.ToString());
 
             // Set role and username in session
             HttpContext.Session.SetString("UserRole", user.RoleName);
@@ -53,5 +67,7 @@ namespace SingleTicketing.Controllers
                 _ => RedirectToAction("Index", "Home"),
             };
         }
+
+
     }
 }
