@@ -6,7 +6,9 @@
 
         public string? UserName { get; set; }
 
-        public string? FullName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? MiddleName { get; set; }
 
         public string? BirthDate { get; set; }
 
@@ -18,6 +20,8 @@
 
         public string? Email { get; set; }
         public string? Cases { get; set; }
+
+        public string? Remarks { get; set; }
 
     }
 }

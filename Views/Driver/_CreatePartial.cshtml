@@ -1,0 +1,85 @@
+﻿@model SingleTicketing.Models.DriverViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Add Driver</h5>
+     
+</div>
+
+<div class="modal-body">
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label asp-for="UserName"></label>
+            <input asp-for="UserName" class="form-control" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="FirstName"></label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="LastName"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MiddleName"></label>
+            <input asp-for="MiddleName" class="form-control" />
+            <span asp-validation-for="MiddleName" class="text-danger"></span>
+        </div>
+    
+        <div class="form-group">
+            <label asp-for="Birthdate"></label>
+            <input asp-for="Birthdate" class="form-control" />
+            <span asp-validation-for="Birthdate" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PlateNumber"></label>
+            <input asp-for="PlateNumber" class="form-control" />
+            <span asp-validation-for="PlateNumber" class="text-danger"></span>
+        </div>
+         <div class="form-group">
+            <label asp-for="LicenseRestrictions"></label>
+            <input asp-for="LicenseRestrictions" class="form-control" />
+            <span asp-validation-for="LicenseRestrictions" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="TOP"></label>
+                <input asp-for="TOP" class="form-control" />
+                <span asp-validation-for="TOP" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="TypeOfVehicle"></label>
+                <input asp-for="TypeOfVehicle" class="form-control" />
+                <span asp-validation-for="TypeOfVehicle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Demerit"></label>
+                <input asp-for="Demerit" class="form-control" />
+                <span asp-validation-for="Demerit" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Remarks"></label>
+                <input asp-for="Remarks" class="form-control" />
+                <span asp-validation-for="Remarks" class="text-danger"></span>
+            </div>
+
+
+        </div>
+
+
+        <!-- Add additional fields as needed -->
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+    </form>
+</div>

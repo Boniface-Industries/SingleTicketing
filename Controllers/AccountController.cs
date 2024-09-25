@@ -63,7 +63,7 @@ namespace SingleTicketing.Controllers
                 "SuperAdmin" => RedirectToAction("Home", "SuperAdmin"),
                 "Admin" => RedirectToAction("Index", "Admin"),
                 "Driver" => RedirectToAction("Index", "Driver"),
-                "Enforcer" => RedirectToAction("Index", "Enforcer"),
+                "Enforcer" => RedirectToAction("Dashboard", "Enforcer"),
                 _ => RedirectToAction("Index", "Home"),
             };
         }

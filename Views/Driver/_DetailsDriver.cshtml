@@ -1,0 +1,22 @@
+﻿@model SingleTicketing.Models.DriverViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Driver Details</h5>
+   
+</div>
+<div class="modal-body">
+    <p><strong>User Name:</strong> @Model.UserName</p>
+    <p><strong>First Name:</strong> @Model.FirstName</p>
+    <p><strong>Last Name:</strong> @Model.LastName</p>
+    <p><strong>License Number:</strong> @Model.LicenseNumber</p>
+    <p><strong>Birthdate:</strong> @Model.Birthdate</p>
+    <p><strong>Plate Number:</strong> @Model.PlateNumber</p>
+    <p><strong>License Restrictions:</strong> @Model.LicenseRestrictions</p>
+    <p><strong>Type of Vehicle:</strong> @Model.TypeOfVehicle</p>
+    <p><strong>Demerit Points:</strong> @Model.Demerit</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Remarks:</strong> @Model.Remarks</p>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>

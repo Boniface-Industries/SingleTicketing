@@ -1,14 +1,48 @@
-﻿@Html.Partial("_EnforcerSidebar.cshtml") 
-@* Views/Enforcer/Index.cshtml *@
-@{
-    ViewData["Title"] = "Enforcer Dashboard";
-}
+﻿@Html.Partial("_AdminEnforcerSidebar.cshtml") 
+@model IEnumerable<SingleTicketing.Data.Enforcer>
 
-<h1>@ViewData["Title"]</h1>
+<h2>Enforcers</h2>
 
-@if (ViewBag.WelcomeMessage != null)
-{
-    <h2>@ViewBag.WelcomeMessage</h2>
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>UserName</th>
+            <th>FirstName</th>
+            <th>LastName</th>
+            <th>MiddleName</th>
 
-<p>Your content goes here...</p>
+            <th>BirthDate</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Cases</th>
+            <th>Remarks</th>
+            <th>Contact No</th>
+            <th>Department</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.MiddleName</td>
+                <td>@item.BirthDate</td>
+                <td>@item.Address</td>
+                <td>@item.Email</td>
+                <td>@item.Cases</td>
+                <td>@item.Remarks</td>
+                <td>@item.Contact_No</td>
+                <td>@item.Department</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Create New</a>
