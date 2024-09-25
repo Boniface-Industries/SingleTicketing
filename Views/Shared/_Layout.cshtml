@@ -40,21 +40,60 @@
 
                     <!-- Right aligned login link -->
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-door-fill fs-3"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
-                                <i class="bi bi-door-open fs-3"></i>
-                            </a>
-                        </li>
+
+                        @{
+                            var currentController = ViewContext.RouteData.Values["controller"].ToString();
+                        }
+
+                        @if (Context.Session.GetString("LoggedInUserId") == null) // Check if user is not logged in
+                        {
+                            // Show Login link only if the current controller is not "Account"
+                            if (currentController != "Driver")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
+                                        <i class="bi bi-door-open fs-3"></i>
+                                    </a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            // Show Logout button
+                            <li class="nav-item">
+                                <button type="button" class="nav-link btn btn-link text-dark" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                    <i class="bi bi-box-arrow-right fs-3"></i>
+                                </button>
+                            </li>
+                        }
+
                     </ul>
+
                 </div>
             </div>
         </nav>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
+   
 
     <div class="container">
         <main role="main" class="pb-3">

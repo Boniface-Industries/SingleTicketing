@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
+using SingleTicketing.Models;
 namespace SingleTicketing.Data
 {
     public class MyDbContext : DbContext
@@ -17,7 +17,7 @@ namespace SingleTicketing.Data
         public DbSet<Enforcer> Enforcers { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Violation> Violations { get; set; }
-
+        public DbSet<Attachment> Attachments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

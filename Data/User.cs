@@ -1,21 +1,21 @@
-﻿namespace SingleTicketing.Data
+﻿using SingleTicketing.Models;
+using System.Collections.Generic;
+namespace SingleTicketing.Data
 {
     public class User
     {
         public int Id { get; set; }
+        public int? Sts_Id { get; set; }
         public required string Username { get; set; }
-
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? MiddleName { get; set; }
         public required string PasswordHash { get; set; }
-
-        // Role Reference (Assuming it's already implemented as we discussed)
-        public required string RoleName { get; set; }  // Reference to the RoleName from the Role table
-        public Role? Role { get; set; }  // Optional navigation property
-
-        // Status Reference
-        public string? StatusName { get; set; }  // Reference to StatusName from the Status table
-        public Status? Status { get; set; }  // Optional navigation property
+        public required string RoleName { get; set; }
+        public Role? Role { get; set; }
+        public string? StatusName { get; set; }
+        public Status? Status { get; set; }
+        public string? Remarks { get; set; }
+        public List<Attachment>? Attachments { get; set; } = new List<Attachment>();
     }
 }

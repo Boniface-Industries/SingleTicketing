@@ -12,8 +12,8 @@ using SingleTicketing.Data;
 namespace SingleTicketing.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240924072123_DRIVERS")]
-    partial class DRIVERS
+    [Migration("20240925022347_UPDATE")]
+    partial class UPDATE
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,7 +62,13 @@ namespace SingleTicketing.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Admitted")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Birthdate")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Contested")
                         .HasColumnType("longtext");
 
                     b.Property<int?>("Demerit")
@@ -82,6 +88,9 @@ namespace SingleTicketing.Migrations
 
                     b.Property<int?>("PlateNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("TOP")
                         .HasColumnType("longtext");
@@ -254,6 +263,9 @@ namespace SingleTicketing.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
+
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
@@ -263,6 +275,9 @@ namespace SingleTicketing.Migrations
 
                     b.Property<string>("StatusName")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<int?>("Sts_Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -301,6 +316,36 @@ namespace SingleTicketing.Migrations
                     b.ToTable("Violations");
                 });
 
+            modelBuilder.Entity("SingleTicketing.Models.Attachment", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int?>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("longtext");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("longblob");
+
+                    b.Property<byte[]>("FileData")
+                        .HasColumnType("longblob");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Attachments");
+                });
+
             modelBuilder.Entity("SingleTicketing.Data.User", b =>
                 {
                     b.HasOne("SingleTicketing.Data.Role", null)
@@ -324,9 +369,23 @@ namespace SingleTicketing.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("SingleTicketing.Models.Attachment", b =>
+                {
+                    b.HasOne("SingleTicketing.Data.User", "User")
+                        .WithMany("Attachments")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SingleTicketing.Data.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("SingleTicketing.Data.User", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 #pragma warning restore 612, 618
         }

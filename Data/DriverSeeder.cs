@@ -25,7 +25,9 @@ namespace SingleTicketing.Data
                     new Driver
                     {
                         UserName = "driver1",
-                        FullName = "John Doe",
+                        FirstName = "John  ",
+                          LastName = "  Doe",
+                            MiddleName = "Joe",
                         LicenseNumber = "AB123456",
                         Birthdate = "1980-01-01",
                         PlateNumber = 1234,
@@ -38,7 +40,9 @@ namespace SingleTicketing.Data
                     new Driver
                     {
                         UserName = "driver2",
-                        FullName = "Jane Smith",
+                         FirstName = "John  ",
+                       LastName = "  Smith",
+                        MiddleName = "  Doe",
                         LicenseNumber = "CD654321",
                         Birthdate = "1985-05-15",
                         PlateNumber = 5678,

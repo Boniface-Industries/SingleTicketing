@@ -104,14 +104,45 @@ namespace SingleTicketing.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Create a new user instance with PasswordHash set in the initializer
+                // Create a new user instance with additional fields
                 var user = new User
                 {
+                    Sts_Id = model.Sts_Id,
                     Username = model.Username,
                     RoleName = model.RoleName,
                     StatusName = model.StatusName,
-                    PasswordHash = _passwordHasher.HashPassword(null, model.PasswordHash) // Hash the password here
+                    PasswordHash = _passwordHasher.HashPassword(null, model.PasswordHash), // Hash the password here
+
+                    // Add new fields
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    MiddleName = model.MiddleName,
+                    Remarks = model.Remarks,
+                    Attachments = new List<Attachment>() // Change to List<Attachment>
                 };
+
+                // Process each uploaded file and convert it to Attachment
+                if (model.Attachments != null && model.Attachments.Count > 0)
+                {
+                    foreach (var file in model.Attachments)
+                    {
+                        if (file.Length > 0) // Ensure the file is not empty
+                        {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await file.CopyToAsync(memoryStream);
+                                var attachment = new Attachment
+                                {
+                                    FileData = memoryStream.ToArray(),
+                                    FileName = file.FileName,
+                                    ContentType = file.ContentType,
+                                    UserId = user.Id // Assuming you're setting the UserId after the user is created
+                                };
+                                user.Attachments.Add(attachment); // Add the attachment to the user's attachments
+                            }
+                        }
+                    }
+                }
 
                 // Add the user to the database context
                 _context.Add(user);
@@ -124,7 +155,7 @@ namespace SingleTicketing.Controllers
             }
 
             model.AvailableRoles = await _context.Roles.Select(r => r.RoleName).ToListAsync();
-            // If we get to this point, something went wrong, so redisplay the form.    
+            // If we get to this point, something went wrong, so redisplay the form.
             return View(model);
         }
 
@@ -145,8 +176,7 @@ namespace SingleTicketing.Controllers
         // GET: SuperAdmin/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.Include(u => u.Attachments).FirstOrDefaultAsync(u => u.Id == id); // Make sure to include Attachments
             if (user == null)
             {
                 return NotFound();
@@ -155,16 +185,25 @@ namespace SingleTicketing.Controllers
             var model = new EditViewModel
             {
                 Id = user.Id,
+                Sts_Id = user.Sts_Id,
                 Username = user.Username,
-                PasswordHash = user.PasswordHash, 
+                PasswordHash = user.PasswordHash,
                 RoleName = user.RoleName,
                 StatusName = user.StatusName,
+
+                // Include the new fields
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                MiddleName = user.MiddleName,
+                Remarks = user.Remarks,
+                ExistingAttachments = user.Attachments, // This should now match
 
                 AvailableRoles = await _context.Roles.Select(r => r.RoleName).ToListAsync()
             };
 
             return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -179,35 +218,46 @@ namespace SingleTicketing.Controllers
             {
                 try
                 {
-                    var existingUser = await _context.Users.FindAsync(id);
+                    var existingUser = await _context.Users.Include(u => u.Attachments).FirstOrDefaultAsync(u => u.Id == id);
                     if (existingUser == null)
                     {
                         return NotFound();
                     }
 
                     // Update only the relevant fields if they are not null
-                    if (!string.IsNullOrEmpty(model.Username))
+                    existingUser.Sts_Id = model.Sts_Id ?? existingUser.Sts_Id; // Use ?? to retain existing value if null
+                    existingUser.Username = string.IsNullOrEmpty(model.Username) ? existingUser.Username : model.Username;
+                    existingUser.PasswordHash = string.IsNullOrEmpty(model.PasswordHash) ? existingUser.PasswordHash : _passwordHasher.HashPassword(existingUser, model.PasswordHash);
+                    existingUser.RoleName = string.IsNullOrEmpty(model.RoleName) ? existingUser.RoleName : model.RoleName;
+                    existingUser.StatusName = string.IsNullOrEmpty(model.StatusName) ? existingUser.StatusName : model.StatusName;
+
+                    // Update the new fields
+                    existingUser.FirstName = string.IsNullOrEmpty(model.FirstName) ? existingUser.FirstName : model.FirstName;
+                    existingUser.LastName = string.IsNullOrEmpty(model.LastName) ? existingUser.LastName : model.LastName;
+                    existingUser.MiddleName = string.IsNullOrEmpty(model.MiddleName) ? existingUser.MiddleName : model.MiddleName;
+                    existingUser.Remarks = string.IsNullOrEmpty(model.Remarks) ? existingUser.Remarks : model.Remarks;
+
+                    // Adding new attachments
+                    if (model.Attachments != null && model.Attachments.Count > 0)
                     {
-                        existingUser.Username = model.Username;
+                        foreach (var file in model.Attachments)
+                        {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await file.CopyToAsync(memoryStream);
+                                var attachment = new Attachment
+                                {
+                                    Data = memoryStream.ToArray(), // This should work now
+                                    FileName = file.FileName, // Optional: capture the original file name
+                                    ContentType = file.ContentType // Optional: capture the file content type
+                                };
+                                existingUser.Attachments.Add(attachment); // Now add the Attachment object
+                            }
+                        }
                     }
 
-                    if (!string.IsNullOrEmpty(model.PasswordHash))
-                    {
-                        // Hash the password
-                        existingUser.PasswordHash = _passwordHasher.HashPassword(existingUser, model.PasswordHash);
-                    }
 
-                    if (!string.IsNullOrEmpty(model.RoleName))
-                    {
-                        existingUser.RoleName = model.RoleName;
-                    }
-
-
-                    if (!string.IsNullOrEmpty(model.StatusName))
-                    {
-                        existingUser.StatusName = model.StatusName;
-                    }
-
+                    // Update the user in the context
                     _context.Update(existingUser);
                     await _context.SaveChangesAsync();
 
@@ -225,12 +275,11 @@ namespace SingleTicketing.Controllers
                     Console.WriteLine($"Exception: {ex.Message}");
                 }
             }
- 
- 
 
             TempData["ErrorMessage"] = "Please correct the errors in the form.";
             return View(model);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ValidatePassword([FromBody] PasswordValidationModel model)
@@ -271,6 +320,24 @@ namespace SingleTicketing.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteAttachment(int attachmentId, int userId)
+        {
+            // Find the attachment by ID and delete it
+            var attachment = await _context.Attachments.FindAsync(attachmentId);
+            if (attachment != null)
+            {
+                _context.Attachments.Remove(attachment);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Attachment deleted successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Attachment not found.";
+            }
+
+            return RedirectToAction("Edit", new { id = userId });
+        }
 
 
     }

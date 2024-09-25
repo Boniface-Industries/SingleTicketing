@@ -7,16 +7,26 @@
 <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
     <!-- Driver dashboard content -->
     <button onclick="location.href='@Url.Action("Scan", "Driver")'"
-            class="btn btn-primary btn-lg mb-3 w-100"
+            class="btn btn-primary btn-lg mb-3"
             style="max-width: 400px; height: 100px;
                    background-image: url('/images/QRscan.jpg');
                    background-size: cover; background-position: center;
                    color: white; border: none;">
         SCAN QR CODE
     </button>
-    <button onclick="location.href='@Url.Action("License", "Driver")'" class="btn btn-success btn-lg w-100" style="max-width: 400px;">
-        ENTER LICENSE ID IN HERE
-    </button>
+
+    @model SingleTicketing.Models.DriverLoginViewModel
+
+    <h2 class="mb-3">Login</h2>
+
+    <form asp-action="Login" method="post" class="w-100" style="max-width: 400px;">
+        <div class="form-group">
+            <label asp-for="LicenseNumber" class="form-label"></label>
+            <input asp-for="LicenseNumber" class="form-control" />
+            <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
 </div>
 
 @section Scripts {

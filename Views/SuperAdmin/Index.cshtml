@@ -8,41 +8,64 @@
     <div class="container">
         <h2 class="text-center mb-4">User Management</h2>
 
+        <!-- Button to Create a New User -->
+        <div class="text-end mb-3">
+            <a asp-controller="Role" asp-action="Index" class="btn btn-primary">
+                Edit Roles
+            </a>
+        </div>
+        <!-- Button to Create a New User -->
+        <div class="text-end mb-3">
+            <a asp-controller="SuperAdmin" asp-action="Create" class="btn btn-primary">
+                Create New User
+            </a>
+        </div>
+
         <!-- Card for User List -->
         <div class="card">
             <div class="card-header">
                 <h5>User List</h5>
             </div>
             <div class="card-body">
-                <!-- Search Bar 
-                 <div class="mb-3">
-                     <input type="text" id="searchInput" class="form-control" placeholder="Search by username..." />
-                 </div>-->
-
+                <!-- Search Bar -->
+                <!--
+                <div class="mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by username..." />
+                </div>
+                -->
                 <!-- User list table with hover and click functionality -->
                 <div class="table-responsive">
                     <table class="table table-hover table-striped" id="userTable">
                         <thead class="table-dark">
                             <tr>
+                                <th>Sts_ID</th>
                                 <th>Username</th>
+                                <th>FirstName</th>
+                                <th>LastName</th>
+                                <th>MiddleName</th>
                                 <th>Role</th>
+                                <th>Remarks</th>
                                 <th>Status</th>
-                                
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var user in Model.Users)
                             {
                                 <tr data-bs-toggle="modal" data-bs-target="#passwordModal" onclick="setUserForEdit(@user.Id)" style="cursor: pointer;">
+                                    <td>@user.Sts_Id</td>
                                     <td>@user.Username</td>
+                                    <td>@user.FirstName</td>
+                                    <td>@user.LastName</td>
+                                    <td>@user.MiddleName</td>
                                     <td>@user.RoleName</td>
+                                    <td>@user.Remarks</td>
                                     <td>@user.StatusName</td>
-                                     
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
+
                 <!-- Pagination -->
                 <nav aria-label="User Pagination">
                     <ul class="pagination justify-content-center">
@@ -85,6 +108,7 @@
     </div>
 </div>
 
+
 <script>
     function setUserForEdit(userId) {
         document.getElementById('userId').value = userId; // Store selected userId in the hidden field
@@ -109,6 +133,14 @@
             alert('Invalid password. Please try again.');
         }
     });
+
+    // Add event listener for the Enter key in the password input
+    document.getElementById('passwordInput').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            document.getElementById('confirmEditButton').click(); // Trigger the click on the confirm button
+        }
+    });
+
 
     // document.getElementById('searchInput').addEventListener('keyup', function () {
     //     const filter = this.value.toLowerCase();

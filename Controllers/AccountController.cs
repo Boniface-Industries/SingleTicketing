@@ -67,6 +67,17 @@ namespace SingleTicketing.Controllers
                 _ => RedirectToAction("Index", "Home"),
             };
         }
+        // GET: /Account/Logout
+        [HttpPost] // Use POST to prevent CSRF attacks
+        public IActionResult Logout()
+        {
+            // Clear the session
+            HttpContext.Session.Clear();
+
+            TempData["SuccessMessage"] = "You have been logged out.";
+
+            return RedirectToAction("Index", "Home"); // Redirect to the home page after logout
+        }
 
 
     }

@@ -7,45 +7,38 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SingleTicketing.Migrations
 {
     /// <inheritdoc />
-    public partial class DRIVERS : Migration
+    public partial class UPDATE : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Users_Statuses_StatusName",
-                table: "Users");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "StatusName",
-                table: "Users",
-                type: "varchar(255)",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "varchar(255)")
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.AddColumn<string>(
-                name: "FirstName",
-                table: "Users",
-                type: "longtext",
-                nullable: true)
+            migrationBuilder.AlterDatabase()
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.AddColumn<string>(
-                name: "LastName",
-                table: "Users",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.AddColumn<string>(
-                name: "MiddleName",
-                table: "Users",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.CreateTable(
+              name: "Attachments",
+              columns: table => new
+              {
+                  Id = table.Column<int>(type: "int", nullable: false)
+                      .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                  FileData = table.Column<byte[]>(type: "longblob", nullable: true),
+                  Data = table.Column<byte[]>(type: "longblob", nullable: true),
+                  FileName = table.Column<string>(type: "longtext", nullable: true)
+                      .Annotation("MySql:CharSet", "utf8mb4"),
+                  ContentType = table.Column<string>(type: "longtext", nullable: true)
+                      .Annotation("MySql:CharSet", "utf8mb4"),
+                  UserId = table.Column<int>(type: "int", nullable: true)
+              },
+              constraints: table =>
+              {
+                  table.PrimaryKey("PK_Attachments", x => x.Id);
+                  table.ForeignKey(
+                      name: "FK_Attachments_Users_UserId",
+                      column: x => x.UserId,
+                      principalTable: "Users",
+                      principalColumn: "Id");
+              })
+              .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Admins",
@@ -93,6 +86,12 @@ namespace SingleTicketing.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Demerit = table.Column<int>(type: "int", nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Remarks = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Admitted = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Contested = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -126,6 +125,42 @@ namespace SingleTicketing.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Enforcers", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    RoleName = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.UniqueConstraint("AK_Roles_RoleName", x => x.RoleName);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Statuses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    StatusName = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Statuses", x => x.Id);
+                    table.UniqueConstraint("AK_Statuses_StatusName", x => x.StatusName);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -187,23 +222,83 @@ namespace SingleTicketing.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Users_Statuses_StatusName",
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Sts_Id = table.Column<int>(type: "int", nullable: true),
+                    Username = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FirstName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MiddleName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RoleName = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    StatusName = table.Column<string>(type: "varchar(255)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Remarks = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RoleId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleName",
+                        column: x => x.RoleName,
+                        principalTable: "Roles",
+                        principalColumn: "RoleName",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Users_Statuses_StatusName",
+                        column: x => x.StatusName,
+                        principalTable: "Statuses",
+                        principalColumn: "StatusName");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+          
+            migrationBuilder.CreateIndex(
+                name: "IX_Attachments_UserId",
+                table: "Attachments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId",
                 table: "Users",
-                column: "StatusName",
-                principalTable: "Statuses",
-                principalColumn: "StatusName");
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleName",
+                table: "Users",
+                column: "RoleName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_StatusName",
+                table: "Users",
+                column: "StatusName");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Users_Statuses_StatusName",
-                table: "Users");
-
             migrationBuilder.DropTable(
                 name: "Admins");
+
+            migrationBuilder.DropTable(
+                name: "Attachments");
 
             migrationBuilder.DropTable(
                 name: "Drivers");
@@ -217,43 +312,14 @@ namespace SingleTicketing.Migrations
             migrationBuilder.DropTable(
                 name: "Violations");
 
-            migrationBuilder.DropColumn(
-                name: "FirstName",
-                table: "Users");
+            migrationBuilder.DropTable(
+                name: "Users");
 
-            migrationBuilder.DropColumn(
-                name: "LastName",
-                table: "Users");
+            migrationBuilder.DropTable(
+                name: "Roles");
 
-            migrationBuilder.DropColumn(
-                name: "MiddleName",
-                table: "Users");
-
-            migrationBuilder.UpdateData(
-                table: "Users",
-                keyColumn: "StatusName",
-                keyValue: null,
-                column: "StatusName",
-                value: "");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "StatusName",
-                table: "Users",
-                type: "varchar(255)",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "varchar(255)",
-                oldNullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4")
-                .OldAnnotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Users_Statuses_StatusName",
-                table: "Users",
-                column: "StatusName",
-                principalTable: "Statuses",
-                principalColumn: "StatusName",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.DropTable(
+                name: "Statuses");
         }
     }
 }
