@@ -65,6 +65,9 @@ namespace SingleTicketing.Migrations
                     b.Property<string>("Birthdate")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Cases")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Contested")
                         .HasColumnType("longtext");
 
@@ -74,7 +77,10 @@ namespace SingleTicketing.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LastName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("LicenseNumber")
@@ -83,10 +89,16 @@ namespace SingleTicketing.Migrations
                     b.Property<string>("LicenseRestrictions")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("PlateNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("MiddleName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PlateNumber")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
                         .HasColumnType("longtext");
 
                     b.Property<string>("TOP")
@@ -130,7 +142,16 @@ namespace SingleTicketing.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("FirstName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("MiddleName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Remarks")
                         .HasColumnType("longtext");
 
                     b.Property<string>("UserName")
@@ -313,6 +334,39 @@ namespace SingleTicketing.Migrations
                     b.ToTable("Violations");
                 });
 
+            modelBuilder.Entity("SingleTicketing.Models.ActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ActivityLogs");
+                });
+
             modelBuilder.Entity("SingleTicketing.Models.Attachment", b =>
                 {
                     b.Property<int?>("Id")
@@ -364,6 +418,17 @@ namespace SingleTicketing.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("SingleTicketing.Models.ActivityLog", b =>
+                {
+                    b.HasOne("SingleTicketing.Data.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SingleTicketing.Models.Attachment", b =>

@@ -1,4 +1,49 @@
 ﻿@Html.Partial("_AdminSidebar.cshtml")
 @model IEnumerable<SingleTicketing.Data.User>
  
- 
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="dashboard-container">
+    <div class="row">
+
+        <main role="main" class="col-md-12 ml-sm-auto col-lg-12 px-4">
+            <div class="container mt-4">
+                <div class="card shadow-lg">
+                    <div class="card-body text-center">
+                        <h2 class="card-title text-primary">ADMIN</h2>
+                        <p class="card-text">Welcome to the ADMIN Dashboard</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <p class="card-text">Number of registered users.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Active Sessions</h5>
+                            <p class="card-text">Number of active sessions.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Requests</h5>
+                            <p class="card-text">Number of pending user requests.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

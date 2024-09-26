@@ -1588,3 +1588,121 @@ section,
 .driver-license-text {
     margin-bottom: 0.5rem; /* Space between text items */
 }
+.bg-custom {
+    background-image: url('/images/SUPERADMIN.jpeg');
+    background-size: cover; /* Ensures the entire image is visible */
+    background-position: center; /* Centers the image */
+    min-height: 100vh; /* Ensures the background covers the full height */
+    opacity: 0.9;
+}
+.dashboard-container {
+    background-image: url('/images/ADMIN.jpeg');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh; /* Ensures the background covers the full height */
+    opacity: 0.9; /* Adjust this for the desired transparency */
+}
+
+.sidebar {
+    background-color: rgba(255, 255, 255, 0.9); /* Light background for the sidebar */
+    border-right: 1px solid #dee2e6;
+}
+
+.custom-card {
+    background-color: rgba(255, 255, 255, 0.8); /* Light background for cards */
+    border: 1px solid #dee2e6;
+}
+
+h2 {
+    color: #333;
+}
+
+.nav-link {
+    color: #333;
+}
+
+    .nav-link.active {
+        font-weight: bold;
+    }
+.enforcer-dashboard-container {
+    background-image: url('/images/ENFORCEDASH.jpeg');
+    background-size: cover; /* Ensure the background covers the entire container */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent image repetition */
+    min-height: 100vh; /* Ensure the background covers the full height */
+    opacity: 0.9; /* Adjust transparency if needed */
+    display: flex; /* Enables flexbox for centering content */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+}
+
+/* Additional media query for mobile responsiveness */
+@media (max-width: 768px) {
+    .enforcer-dashboard-container {
+        background-size: cover; /* Keeps cover for smaller screens */
+        min-height: 100vh; /* Ensure it still covers full height */
+    }
+}
+
+
+.sidebar {
+    background-color: rgba(255, 255, 255, 0.9); /* Light background for the sidebar */
+    border-right: 1px solid #dee2e6;
+}
+
+.custom-card {
+    background-color: rgba(255, 255, 255, 0.8); /* Light background for cards */
+    border: 1px solid #dee2e6;
+}
+
+h2 {
+    color: #333;
+}
+
+.nav-link {
+    color: #333;
+}
+
+    .nav-link.active {
+        font-weight: bold;
+    }
+.driver-dashboard-container {
+    background-image: url('/images/DRIVERDASH.jpeg');
+    background-size: cover; /* Cover the entire container */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent image repetition */
+    min-height: 100vh; /* Ensure full height of the viewport */
+    opacity: 0.9; /* Adjust transparency if needed */
+}
+
+/* Additional media query for mobile responsiveness */
+@media (max-width: 768px) {
+    .driver-dashboard-container {
+        background-size: cover; /* Keeps cover for smaller screens */
+        min-height: 100vh; /* Ensure it still covers full height */
+    }
+}
+
+
+
+.sidebar {
+    background-color: rgba(255, 255, 255, 0.9); /* Light background for the sidebar */
+    border-right: 1px solid #dee2e6;
+}
+
+.custom-card {
+    background-color: rgba(255, 255, 255, 0.8); /* Light background for cards */
+    border: 1px solid #dee2e6;
+}
+
+h2 {
+    color: #333;
+}
+
+.nav-link {
+    color: #333;
+}
+
+    .nav-link.active {
+        font-weight: bold;
+    }

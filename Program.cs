@@ -6,7 +6,8 @@ using SingleTicketing.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Logging.AddConsole();
 builder.Services.AddControllersWithViews();

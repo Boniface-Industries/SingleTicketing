@@ -1,17 +1,64 @@
 ﻿@Html.Partial("_DriverSidebar.cshtml")
 @model SingleTicketing.Models.DriverViewModel
-<div class="driver-license-card" style="width: 18rem; border: 1px solid #007bff; border-radius: 15px;">
-    <div class="card-body">
-        <h5 class="driver-license-title text-center text-primary">Driver License</h5>
-        <h6 class="card-subtitle mb-2 text-muted text-center">@Model.UserName</h6>
-        <p class="driver-license-text"><strong>Name:</strong> @Model.FirstName @Model.LastName</p>
-        <p class="driver-license-text"><strong>License Number:</strong> @Model.LicenseNumber</p>
-        <p class="driver-license-text"><strong>Birthdate:</strong> @Model.Birthdate</p>
-        <p class="driver-license-text"><strong>Plate Number:</strong> @Model.PlateNumber</p>
-        <p class="driver-license-text"><strong>License Restrictions:</strong> @Model.LicenseRestrictions</p>
-        <p class="driver-license-text"><strong>Type of Vehicle:</strong> @Model.TypeOfVehicle</p>
-        <p class="driver-license-text"><strong>Demerit Points:</strong> @Model.Demerit</p>
-        <p class="driver-license-text"><strong>Email:</strong> @Model.Email</p>
-        <p class="driver-license-text"><strong>Remarks:</strong> @Model.Remarks</p>
+
+
+<div class="driver-dashboard-container">
+    <div class="row">
+
+
+        <main role="main" class="col-md-12 ml-sm-auto col-lg-12 px-4">
+            <div class="container mt-4">
+                <div class="card shadow-lg">
+                    <div class="card-body text-center">
+                        <h2 class="card-title text-primary">DRIVER</h2>
+                        <p class="card-text">Welcome to the DRIVER Dashboard</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Tickets</h5>
+                            <p class="card-text">Number of tickets issued to you.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Payments</h5>
+                            <p class="card-text">Total payments pending for your tickets.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Completed Payments</h5>
+                            <p class="card-text">Total payments completed successfully.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                <div class="driver-license-card" style="width: 18rem; border: 1px solid #007bff; border-radius: 15px;">
+                    <div class="card-body">
+                        <h5 class="driver-license-title text-center text-primary">Driver License</h5>
+                        <h6 class="card-subtitle mb-2 text-muted text-center">@Model.UserName</h6>
+                        <p class="driver-license-text"><strong>Name:</strong> @Model.FirstName @Model.LastName</p>
+                        <p class="driver-license-text"><strong>License Number:</strong> @Model.LicenseNumber</p>
+                        <p class="driver-license-text"><strong>Birthdate:</strong> @Model.Birthdate</p>
+                        <p class="driver-license-text"><strong>Plate Number:</strong> @Model.PlateNumber</p>
+                        <p class="driver-license-text"><strong>License Restrictions:</strong> @Model.LicenseRestrictions</p>
+                        <p class="driver-license-text"><strong>Type of Vehicle:</strong> @Model.TypeOfVehicle</p>
+                        <p class="driver-license-text"><strong>Demerit Points:</strong> @Model.Demerit</p>
+                        <p class="driver-license-text"><strong>Email:</strong> @Model.Email</p>
+                        <p class="driver-license-text"><strong>Remarks:</strong> @Model.Remarks</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </main>
     </div>
 </div>

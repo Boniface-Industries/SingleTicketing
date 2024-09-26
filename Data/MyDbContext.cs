@@ -18,7 +18,7 @@ namespace SingleTicketing.Data
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Violation> Violations { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
-
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -33,7 +33,14 @@ namespace SingleTicketing.Data
                 .HasOne(u => u.Status)
                 .WithMany()
                 .HasForeignKey(u => u.StatusName)       
-                .HasPrincipalKey(s => s.StatusName);  
+                .HasPrincipalKey(s => s.StatusName);
+
+            // Define relationship between ActivityLog and User
+            modelBuilder.Entity<ActivityLog>()
+                .HasOne(log => log.User)
+                .WithMany()  // Assuming User does not have a collection of ActivityLogs
+                .HasForeignKey(log => log.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Configure cascade delete behavior if desired
         }
 
 

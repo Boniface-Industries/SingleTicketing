@@ -1,1 +1,47 @@
 ﻿@Html.Partial("_EnforcerSidebar.cshtml") 
+@{
+    ViewData["Title"] = "Enforcer Dashboard";
+}
+
+<div class="enforcer-dashboard-container">
+    <div class="row">
+        
+        <main role="main" class="col-md-12 ml-sm-auto col-lg-12 px-4">
+            <div class="container mt-4">
+                <div class="card shadow-lg">
+                    <div class="card-body text-center">
+                        <h2 class="card-title text-primary">ENFORCER</h2>
+                        <p class="card-text">Welcome to the Enforcer Dashboard</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Cases</h5>
+                            <p class="card-text">Number of cases assigned to you.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Tickets</h5>
+                            <p class="card-text">Number of pending tickets for resolution.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Completed Cases</h5>
+                            <p class="card-text">Number of cases you have completed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
