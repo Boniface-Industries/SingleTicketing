@@ -17,8 +17,12 @@ namespace SingleTicketing.Models
         public required string MiddleName { get; set; }
         public required string Action { get; set; }
         public required string Details { get; set; }
-        public required DateTime Timestamp { get; set; }
+        // Separate properties for date and time
+        public DateTime? Date { get; set; }   // Stores the date
+        public TimeSpan? Time { get; set; }   // Stores the time
         public required string IpAddress { get; set; }
+
+        public string? Page { get; set; }
     }
 
 }

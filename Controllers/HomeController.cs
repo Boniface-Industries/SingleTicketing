@@ -21,6 +21,7 @@ namespace SingleTicketing.Controllers
 
         public IActionResult Index()
         {
+            
             return View();
         }
 

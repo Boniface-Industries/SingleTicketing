@@ -17,7 +17,8 @@
             <th>Lastname</th>
             <th>Details</th>
             <th>IP Address</th>
-            <th>Date & Time</th>
+            <th>Date</th>
+            <th>Time</th>
         </tr>
     </thead>
     <tbody>
@@ -32,7 +33,9 @@
                 <td>@log.LastName</td>
                 <td>@log.Details</td>
                 <td>@log.IpAddress</td>
-                <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@log.Date?.ToString("yyyy-MM-dd") </td> <!-- Display the date -->
+                <td>@log.Time?.ToString(@"hh\:mm\:ss") </td> <!-- Display the time -->
+
             </tr>
         }
     </tbody>

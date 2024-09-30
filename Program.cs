@@ -22,6 +22,12 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+// Configure Kestrel to listen on all network interfaces before building the app
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(5000); // For HTTP
+    serverOptions.ListenAnyIP(5001); // For HTTPS
+});
 
 var app = builder.Build();
 
@@ -52,12 +58,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
-
+app.UseMiddleware<SingleTicketing.Middleware.PageVisitLoggingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.Run();

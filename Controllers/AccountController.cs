@@ -26,7 +26,6 @@ namespace SingleTicketing.Controllers
         {
             return View();
         }
-
         // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -45,6 +44,12 @@ namespace SingleTicketing.Controllers
             System.Diagnostics.Debug.WriteLine($"Verifying password for user: {user.Username}");
 
             // Verify the password
+            if (string.IsNullOrEmpty(user.PasswordHash))
+            {
+                TempData["ErrorMessage"] = "Invalid login attempt.";
+                return View(model);
+            }
+
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
 
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
@@ -54,25 +59,17 @@ namespace SingleTicketing.Controllers
             }
 
             // Password is correct, set session for the logged-in user
-            HttpContext.Session.SetInt32("LoggedInUserId", user.Id); // Store as int
-
-            // Set role and username in session
+            HttpContext.Session.SetString("LoggedInUserId", user.Id.ToString());
             HttpContext.Session.SetString("UserRole", user.RoleName);
             HttpContext.Session.SetString("Username", user.Username);
 
             TempData["SuccessMessage"] = "Login successful!";
 
             // Capture the IPv4 address
-            string ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
-
-            // If IP address is not available, use a default value
-            if (string.IsNullOrEmpty(ipAddress))
-            {
-                ipAddress = "127.0.0.1"; // Default to localhost if no IP is found
-            }
+            string ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1"; // Use a default value if IP is not available
 
             // Log the login activity
-            await _activityLogService.LogActivityAsync(user.Id, "Login", "User logged in", ipAddress); // Pass user.Id directly
+            await _activityLogService.LogActivityAsync(user.Id, "Login", "User logged in", ipAddress);
 
             // Redirect based on role
             return user.RoleName switch
@@ -85,8 +82,6 @@ namespace SingleTicketing.Controllers
             };
         }
 
-
-
         public async Task<IActionResult> Logout()
         {
             // Get the logged-in user ID from the session as an integer
@@ -95,16 +90,10 @@ namespace SingleTicketing.Controllers
             if (userId.HasValue) // Check if userId has a value
             {
                 // Capture the IP address
-                string ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString();
-
-                // If IP address is not available, use a default value or handle accordingly
-                if (string.IsNullOrEmpty(ipAddress))
-                {
-                    ipAddress = "127.0.0.1"; // Default to localhost if no IP is found
-                }
+                string ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1"; // Use a default value if IP is not available
 
                 // Log the logout activity
-                await _activityLogService.LogActivityAsync(userId.Value, "Logout", "User logged out", ipAddress); // Use userId.Value directly
+                await _activityLogService.LogActivityAsync(userId.Value, "Logout", "User logged out", ipAddress);
             }
 
             // Clear the session

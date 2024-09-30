@@ -20,7 +20,10 @@ namespace SingleTicketing.Services
                 throw new ArgumentException("User not found.", nameof(userId));
             }
 
-            // Create the activity log with the required User property
+            // Get the current date and time
+            DateTime now = DateTime.UtcNow;
+
+            // Create the activity log with the required properties
             var log = new ActivityLog
             {
                 User = user, // Set the required User object
@@ -31,8 +34,10 @@ namespace SingleTicketing.Services
                 MiddleName = user.MiddleName ?? "No Middle Name", // Default to "No Middle Name" if null
                 Action = action,
                 Details = details,
-                Timestamp = DateTime.UtcNow,
-                IpAddress = ipAddress
+                Date = now.Date, // Set the date part
+                Time = now.TimeOfDay, // Set the time part
+                IpAddress = ipAddress,
+                Page = "N/A" // Set a default value for actions not tied to specific pages
             };
 
             _context.ActivityLogs.Add(log);
@@ -40,7 +45,41 @@ namespace SingleTicketing.Services
         }
 
 
+        // New method to log page visits, as required by IActivityLogService
+        public async Task LogPageVisitAsync(int userId, string pageUrl, string ipAddress)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.", nameof(userId));
+            }
 
+            // Get the current date and time
+            DateTime now = DateTime.UtcNow;
+
+            var log = new ActivityLog
+            {
+                User = user,
+                UserId = userId,
+                Username = user.Username ?? "Unknown",
+                FirstName = user.FirstName ?? "No First Name",
+                LastName = user.LastName ?? "No Last Name",
+                MiddleName = user.MiddleName ?? "No Middle Name",
+                Action = "Page Visit",
+                Details = $"Visited page: {pageUrl}",
+                Page = pageUrl, // Set the actual page URL
+                Date = now.Date, // Set the date part
+                Time = now.TimeOfDay, // Set the time part
+                IpAddress = ipAddress
+            };
+
+            _context.ActivityLogs.Add(log);
+            await _context.SaveChangesAsync();
+        }
 
     }
+
+
+
 }
+

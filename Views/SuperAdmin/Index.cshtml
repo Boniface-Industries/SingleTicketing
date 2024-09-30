@@ -112,7 +112,9 @@
 <script>
     function setUserForEdit(userId) {
         document.getElementById('userId').value = userId; // Store selected userId in the hidden field
+        console.log("User ID set for edit:", userId); // Debug log
     }
+
 
     document.getElementById('confirmEditButton').addEventListener('click', async function () {
         const password = document.getElementById('passwordInput').value;
@@ -122,15 +124,17 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '@Html.AntiForgeryToken()' // Include CSRF token
+                'X-CSRF-TOKEN': '@Html.AntiForgeryToken()'
             },
-            body: JSON.stringify({ password: password }) // Send only the password, no userId
+            body: JSON.stringify({ Password: password, UserId: userId }) // Send both Password and UserId
         });
 
+
         if (response.ok) {
-            window.location.href = `/SuperAdmin/Edit/${userId}`; // Redirect to Edit page for the selected user
+            window.location.href = `/SuperAdmin/Edit/${userId}`;
         } else {
-            alert('Invalid password. Please try again.');
+            const errorText = await response.text(); // Get the error response text
+            alert(`Invalid password. ${errorText}`); // Display the error message
         }
     });
 
