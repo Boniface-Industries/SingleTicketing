@@ -23,12 +23,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 // Configure Kestrel to listen on all network interfaces before building the app
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(5000); // For HTTP
-    serverOptions.ListenAnyIP(5001); // For HTTPS
-});
-
+ 
 var app = builder.Build();
 
 // Seed the database

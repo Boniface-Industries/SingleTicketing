@@ -14,13 +14,14 @@ namespace SingleTicketing.Controllers
         // GET: /ActivityLog/Index
         public async Task<IActionResult> Index()
         {
-            // Retrieve all activity logs, ordered by ascending timestamp
+            // Retrieve all activity logs, ordered by descending timestamp (newest first)
             var logs = await _context.ActivityLogs
-                .OrderBy(l => l.Date) // Sort by Timestamp in ascending order
+                .OrderByDescending(l => l.Date) // Sort by Date in descending order
                 .ToListAsync();
 
             return View(logs); // Pass the logs to the view
         }
+
 
     }
 }
