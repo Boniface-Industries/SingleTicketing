@@ -25,7 +25,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/images/etcit.jpg" alt="Logo" class="img-fluid" style="max-width: 50px; height: auto; margin-right: 8px;">
-                    <h1 class="mb-0">SingleTicketing</h1> <!-- Remove margin-bottom from h1 -->
+                    <h1 class="mb-0">SingleTicketing</h1>
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,45 +33,41 @@
                 </button>
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <!-- Left aligned navigation links -->
                     <ul class="navbar-nav flex-grow-1">
-                     
+                        <!-- Left aligned navigation links -->
                     </ul>
 
-                    <!-- Right aligned login link -->
-                    <ul class="navbar-nav ms-auto">
-
-                        @{
-                            var currentController = ViewContext.RouteData.Values["controller"].ToString();
-                        }
-
-                        @if (Context.Session.GetString("LoggedInUserId") == null) // Check if user is not logged in
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        @if (Context.Session.GetString("LoggedInUserId") != null) // Check if user is logged in
                         {
-                            // Show Login link only if the current controller is not "Account"
-                            if (currentController != "Driver")
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
-                                        <i class="bi bi-door-open fs-3"></i>
-                                    </a>
-                                </li>
-                            }
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="fw-bold me-2" style="font-size: 1.25rem;">Welcome, @Context.Session.GetString("Username")</div>
+                                    <span class="badge rounded-pill bg-success" style="font-size: 1rem;">Online</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                            <i class="bi bi-box-arrow-right"></i> Logout
+                                        </button>
+                                    </li>
+                                </ul>
+                            </li>
                         }
                         else
                         {
-                            // Show Logout button
                             <li class="nav-item">
-                                <button type="button" class="nav-link btn btn-link text-dark" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                                    <i class="bi bi-box-arrow-right fs-3"></i>
-                                </button>
+                                <a class="nav-link text-dark d-flex align-items-center" asp-controller="Account" asp-action="Login">
+                                    <i class="bi bi-door-open fs-5"></i> <span style="font-size: 1.25rem;">Login</span>
+                                </a>
                             </li>
                         }
-
                     </ul>
-
                 </div>
             </div>
         </nav>
+
+
         <!-- Logout Confirmation Modal -->
         <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
