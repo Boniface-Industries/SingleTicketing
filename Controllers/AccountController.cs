@@ -68,7 +68,7 @@ namespace SingleTicketing.Controllers
             HttpContext.Session.SetString("LastName", user.LastName ?? "");
             HttpContext.Session.SetString("MiddleInitial", !string.IsNullOrEmpty(user.MiddleName) ? user.MiddleName.Substring(0, 1) : "");
 
-            TempData["SuccessMessage"] = "Login successful!";
+            TempData["SuccessLogin"] = "Login successful!";
 
             // Capture the IPv4 address
             string ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1"; // Use a default value if IP is not available
@@ -118,7 +118,7 @@ namespace SingleTicketing.Controllers
             // Clear the session
             HttpContext.Session.Clear();
 
-            TempData["SuccessMessage"] = "You have been logged out.";
+            TempData["SuccessLogout"] = "You have been logged out.";
             return RedirectToAction("Index", "Home"); // Redirect to the home page after logout
         }
 

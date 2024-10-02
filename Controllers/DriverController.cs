@@ -70,12 +70,21 @@ namespace SingleTicketing.Controllers
                 {
                     // Set the driver's ID in session to use it later
                     HttpContext.Session.SetInt32("DriverId", driver.Id);
-                    return RedirectToAction("License", new { id = driver.Id }); // Pass driver ID to License action
+
+                    // Set a success message in TempData
+                    TempData["SuccessDriver"] = "Login successful! Welcome, " + driver.FirstName;
+
+                    // Redirect to License action with driver ID
+                    return RedirectToAction("License", new { id = driver.Id });
                 }
+
+                // Add an error if the driver is not found
                 ModelState.AddModelError(string.Empty, "Invalid License Number.");
             }
+
             return View(model);
         }
+
         // GET: Drivers
         public IActionResult Index()
         {

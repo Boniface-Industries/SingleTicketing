@@ -16,7 +16,7 @@
         public string? Cases { get; set; }
         public string? LicenseNumber { get; set; }
 
-        public string? Birthdate { get; set; }
+        public DateTime? Birthdate { get; set; }
 
         public string? PlateNumber { get; set; }
 

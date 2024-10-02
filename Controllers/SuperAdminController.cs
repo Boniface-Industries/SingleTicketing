@@ -316,7 +316,7 @@ namespace SingleTicketing.Controllers
                     _context.Update(existingUser);
                     await _context.SaveChangesAsync();
 
-                    TempData["SuccessMessage"] = "User details updated successfully.";
+                    TempData["SuccessEdit"] = "User details updated successfully.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException ex)
