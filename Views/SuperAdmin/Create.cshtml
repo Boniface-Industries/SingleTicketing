@@ -7,7 +7,7 @@
             <h4 class="mb-0">Create User</h4>
         </div>
         <div class="card-body">
-            <form asp-action="Create">
+            <form asp-action="Create" id="createUserForm">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
@@ -91,9 +91,43 @@
     </div>
 </div>
 
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-danger text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Error message will be inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Check if there are validation errors
+            var validationErrors = [];
+        @if (ViewData.ModelState.Values.SelectMany(v => v.Errors).Any())
+        {
+            <text>
+                        validationErrors = @Html.Raw(Json.Serialize(ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+            </text>
+        }
+
+                    if (validationErrors.length > 0) {
+                $('#modalBody').text(validationErrors[0]); // Show the first error message
+                $('#errorModal').modal('show');
+                setTimeout(function () {
+                    $('#errorModal').modal('hide');
+                }, 3000); // Hide the modal after 3 seconds
+            }
+        });
+    </script>
 }

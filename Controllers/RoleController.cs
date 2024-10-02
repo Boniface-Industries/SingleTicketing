@@ -110,7 +110,9 @@ namespace SingleTicketing.Controllers
                 _context.Roles.Remove(role);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Index));
+            TempData["SuccessMessage"] = "Role deleted successfully.";
+
+            return RedirectToAction("Index", "Role");
         }
     }
 }

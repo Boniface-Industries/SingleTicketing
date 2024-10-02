@@ -1705,4 +1705,22 @@ h2 {
 
     .nav-link.active {
         font-weight: bold;
-    } 
+    }
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+    .pagination a {
+        margin: 0 5px;
+        padding: 5px 10px;
+        border: 1px solid #007bff;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+        }

@@ -63,6 +63,11 @@ namespace SingleTicketing.Controllers
             HttpContext.Session.SetString("UserRole", user.RoleName);
             HttpContext.Session.SetString("Username", user.Username);
 
+            // Store the user's full name in the session
+            HttpContext.Session.SetString("FirstName", user.FirstName ?? "");
+            HttpContext.Session.SetString("LastName", user.LastName ?? "");
+            HttpContext.Session.SetString("MiddleInitial", !string.IsNullOrEmpty(user.MiddleName) ? user.MiddleName.Substring(0, 1) : "");
+
             TempData["SuccessMessage"] = "Login successful!";
 
             // Capture the IPv4 address
@@ -84,25 +89,39 @@ namespace SingleTicketing.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            // Get the logged-in user ID from the session as an integer
-            var userId = HttpContext.Session.GetInt32("LoggedInUserId");
+            System.Diagnostics.Debug.WriteLine("Logout initiated.");
 
-            if (userId.HasValue) // Check if userId has a value
+            // Retrieve the user ID from the session
+            var userId = HttpContext.Session.GetString("LoggedInUserId");
+
+            if (!string.IsNullOrEmpty(userId))
             {
                 // Capture the IP address
-                string ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1"; // Use a default value if IP is not available
+                string ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1";
 
                 // Log the logout activity
-                await _activityLogService.LogActivityAsync(userId.Value, "Logout", "User logged out", ipAddress);
+                try
+                {
+                    await _activityLogService.LogActivityAsync(int.Parse(userId), "Logout", "User logged out", ipAddress);
+                    System.Diagnostics.Debug.WriteLine($"User ID logged out: {userId}");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error logging logout activity: {ex.Message}");
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("No user ID found in session for logout.");
             }
 
             // Clear the session
             HttpContext.Session.Clear();
 
             TempData["SuccessMessage"] = "You have been logged out.";
-
             return RedirectToAction("Index", "Home"); // Redirect to the home page after logout
         }
+
 
     }
 }

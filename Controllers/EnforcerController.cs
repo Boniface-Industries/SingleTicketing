@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SingleTicketing.Data;
+using SingleTicketing.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +9,12 @@ namespace SingleTicketing.Controllers
     public class EnforcerController : Controller
     {
         private readonly MyDbContext _context;
+        private readonly IAuditTrailService _auditTrailService;
 
-        public EnforcerController(MyDbContext context)
+        public EnforcerController(MyDbContext context, IAuditTrailService auditTrailService)
         {
             _context = context;
+            _auditTrailService = auditTrailService;
         }
 
         public IActionResult Home()
@@ -55,10 +58,25 @@ namespace SingleTicketing.Controllers
             {
                 _context.Add(enforcer);
                 await _context.SaveChangesAsync();
+
+                // Log creation for each field
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "UserName", null, enforcer.UserName, "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "FirstName", null, enforcer.FirstName, "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "LastName", null, enforcer.LastName, "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "MiddleName", null, enforcer.MiddleName, "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "BirthDate", null, enforcer.BirthDate?.ToString(), "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "Address", null, enforcer.Address, "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "Contact_No",null, enforcer.Contact_No?.ToString(),"Create",HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "Department", null, enforcer.Department, "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "Email", null, enforcer.Email, "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "Cases", null, enforcer.Cases?.ToString(), "Create", HttpContext.Session.GetString("Username"));
+                await _auditTrailService.LogChangeAsync(enforcer.Id, "Remarks", null, enforcer.Remarks, "Create", HttpContext.Session.GetString("Username"));
+
                 return RedirectToAction(nameof(Index));
             }
             return View(enforcer);
         }
+
 
         // GET: Enforcer/Edit/5
         public async Task<IActionResult> Edit(int? id)

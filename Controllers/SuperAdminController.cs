@@ -7,6 +7,8 @@ using SingleTicketing.Services;
 using SingleTicketing.Models;
 using System.Security.Cryptography;
 using System.Text;
+ 
+
 using System.Security.Claims;
 
 namespace SingleTicketing.Controllers
@@ -28,6 +30,48 @@ namespace SingleTicketing.Controllers
             // Driver dashboard logic
             return View();
         }
+
+        public async Task<IActionResult> Audit(int? page, DateTime? filterDate)
+        {
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var auditTrails = _context.AuditTrails.AsQueryable();
+
+            // Apply the date filter if provided
+            if (filterDate.HasValue)
+            {
+                auditTrails = auditTrails.Where(a => a.Timestamp.Date == filterDate.Value.Date);
+            }
+
+            auditTrails = auditTrails.OrderByDescending(a => a.Timestamp);
+
+            // Get the total count of audit trails
+            int totalCount = await auditTrails.CountAsync();
+
+            // Fetch the specific page of results
+            var pagedAuditTrails = await auditTrails
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            // Create a view model or directly pass the paged results to the view
+            var viewModel = new AuditViewModel
+            {
+                AuditTrails = pagedAuditTrails,
+                PageNumber = pageNumber,
+                TotalCount = totalCount,
+                PageSize = pageSize,
+                FilterDate = filterDate
+            };
+
+            return View(viewModel);
+        }
+
+
+
+
+
         // GET: SuperAdmin/Index
         public IActionResult Index(int page = 1, int pageSize = 10)
         {
@@ -47,7 +91,8 @@ namespace SingleTicketing.Controllers
                 {
                     Users = users,
                     CurrentPage = page,
-                    TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize)
+                    TotalPages = (int)Math.Ceiling((double)totalUsers / pageSize),
+                    SuccessMessage = TempData["SuccessMessage"]?.ToString() // Retrieve success message from TempData
                 };
 
                 return View(model);
@@ -58,6 +103,7 @@ namespace SingleTicketing.Controllers
                 return View(new UserListViewModel { Users = new List<User>() }); // Return an empty list to avoid null reference
             }
         }
+
 
         //// GET: SuperAdmin/Delete/5
         //public async Task<IActionResult> Delete(int id)
@@ -102,8 +148,18 @@ namespace SingleTicketing.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
+            // Ensure available roles are populated before validation
+            model.AvailableRoles = await _context.Roles.Select(r => r.RoleName).ToListAsync();
+
             if (ModelState.IsValid)
             {
+                // Validate that PasswordHash is not null or empty
+                if (string.IsNullOrWhiteSpace(model.PasswordHash))
+                {
+                    ModelState.AddModelError("PasswordHash", "Password is required.");
+                    return View(model); // Redisplay the form with the error
+                }
+
                 // Create a new user instance with additional fields
                 var user = new User
                 {
@@ -150,14 +206,13 @@ namespace SingleTicketing.Controllers
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "User created successfully.";
-                return RedirectToAction(nameof(Index));
+                TempData["Success"] = "User created successfully.";
+                return RedirectToAction("Index", "SuperAdmin");
             }
-
-            model.AvailableRoles = await _context.Roles.Select(r => r.RoleName).ToListAsync();
-            // If we get to this point, something went wrong, so redisplay the form.
-            return View(model);
+                // If we get to this point, something went wrong, so redisplay the form.
+                return View(model);
         }
+
 
         // GET: SuperAdmin/Details/5
         public async Task<IActionResult> Details(int id)

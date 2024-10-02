@@ -3,6 +3,43 @@
 @{
     ViewData["Title"] = "User List";
 }
+@if (TempData["Success"] != null)
+{
+    <div class="modal fade show" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-modal="true" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-success text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Success</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @TempData["Success"]
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if successModal exists
+            var successModalElement = document.getElementById('successModal');
+            if (successModalElement) {
+                // Automatically hide the modal after 2 seconds
+                setTimeout(function () {
+                    var successModal = new bootstrap.Modal(successModalElement);
+                    successModal.hide();
+                }, 2000); // 2 seconds
+            } else {
+                console.log("Success modal element not found.");
+            }
+        });
+    </script>
+}
+
+
 
 <div class="center-wrapper my-5">
     <div class="container">
@@ -27,13 +64,6 @@
                 <h5>User List</h5>
             </div>
             <div class="card-body">
-                <!-- Search Bar -->
-                <!--
-                <div class="mb-3">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search by username..." />
-                </div>
-                -->
-                <!-- User list table with hover and click functionality -->
                 <div class="table-responsive">
                     <table class="table table-hover table-striped" id="userTable">
                         <thead class="table-dark">
@@ -88,6 +118,8 @@
     </div>
 </div>
 
+
+
 <!-- Password Modal -->
 <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -107,14 +139,17 @@
         </div>
     </div>
 </div>
-
-
+ 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 <script>
+
     function setUserForEdit(userId) {
         document.getElementById('userId').value = userId; // Store selected userId in the hidden field
         console.log("User ID set for edit:", userId); // Debug log
     }
-
 
     document.getElementById('confirmEditButton').addEventListener('click', async function () {
         const password = document.getElementById('passwordInput').value;
@@ -129,9 +164,12 @@
             body: JSON.stringify({ Password: password, UserId: userId }) // Send both Password and UserId
         });
 
-
         if (response.ok) {
-            window.location.href = `/SuperAdmin/Edit/${userId}`;
+            // Show success modal upon successful user creation
+            $('#successModal').modal('show'); // Show success modal
+            setTimeout(() => {
+                window.location.href = `/SuperAdmin/Edit/${userId}`;
+            }, 2000); // Redirect after 2 seconds
         } else {
             const errorText = await response.text(); // Get the error response text
             alert(`Invalid password. ${errorText}`); // Display the error message
@@ -144,17 +182,6 @@
             document.getElementById('confirmEditButton').click(); // Trigger the click on the confirm button
         }
     });
-
-
-    // document.getElementById('searchInput').addEventListener('keyup', function () {
-    //     const filter = this.value.toLowerCase();
-    //     const rows = document.querySelectorAll('#userTable tbody tr');
-
-    //     rows.forEach(row => {
-    //         const username = row.querySelector('td:first-child').textContent.toLowerCase();
-    //         row.style.display = username.includes(filter) ? '' : 'none';
-    //     });
-    // });
 </script>
-
-
+ 
+}

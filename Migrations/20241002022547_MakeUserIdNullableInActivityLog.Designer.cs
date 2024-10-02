@@ -12,8 +12,8 @@ using SingleTicketing.Data;
 namespace SingleTicketing.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20240926005327_ACTIVITYLOGS")]
-    partial class ACTIVITYLOGS
+    [Migration("20241002022547_MakeUserIdNullableInActivityLog")]
+    partial class MakeUserIdNullableInActivityLog
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -349,7 +349,14 @@ namespace SingleTicketing.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -357,11 +364,26 @@ namespace SingleTicketing.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                    b.Property<int>("UserId")
+                    b.Property<string>("MiddleName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Page")
+                        .HasColumnType("longtext");
+
+                    b.Property<TimeSpan?>("Time")
+                        .HasColumnType("time(6)");
+
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -400,6 +422,42 @@ namespace SingleTicketing.Migrations
                     b.ToTable("Attachments");
                 });
 
+            modelBuilder.Entity("SingleTicketing.Models.AuditTrail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditTrails");
+                });
+
             modelBuilder.Entity("SingleTicketing.Data.User", b =>
                 {
                     b.HasOne("SingleTicketing.Data.Role", null)
@@ -428,8 +486,7 @@ namespace SingleTicketing.Migrations
                     b.HasOne("SingleTicketing.Data.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });

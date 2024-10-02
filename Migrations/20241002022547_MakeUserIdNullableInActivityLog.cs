@@ -7,40 +7,50 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SingleTicketing.Migrations
 {
     /// <inheritdoc />
-    public partial class ACTIVITYLOGS : Migration
+    public partial class MakeUserIdNullableInActivityLog : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder.CreateTable(
-            name: "ActivityLogs",
-            columns: table => new
-            {
-                Id = table.Column<int>(type: "int", nullable: false)
-                    .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                UserId = table.Column<int>(type: "int", nullable: false),
-                Action = table.Column<string>(type: "longtext", nullable: false)
-                    .Annotation("MySql:CharSet", "utf8mb4"),
-                Details = table.Column<string>(type: "longtext", nullable: false)
-                    .Annotation("MySql:CharSet", "utf8mb4"),
-                Timestamp = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                IpAddress = table.Column<string>(type: "longtext", nullable: false)
-                    .Annotation("MySql:CharSet", "utf8mb4")
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_ActivityLogs", x => x.Id);
-                table.ForeignKey(
-                    name: "FK_ActivityLogs_Users_UserId",
-                    column: x => x.UserId,
-                    principalTable: "Users",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            })
-            .Annotation("MySql:CharSet", "utf8mb4");
+               name: "ActivityLogs",
+               columns: table => new
+               {
+                   Id = table.Column<int>(type: "int", nullable: false)
+                       .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                   UserId = table.Column<int>(type: "int", nullable: true),
+                   Username = table.Column<string>(type: "longtext", nullable: false)
+                       .Annotation("MySql:CharSet", "utf8mb4"),
+                   FirstName = table.Column<string>(type: "longtext", nullable: false)
+                       .Annotation("MySql:CharSet", "utf8mb4"),
+                   LastName = table.Column<string>(type: "longtext", nullable: false)
+                       .Annotation("MySql:CharSet", "utf8mb4"),
+                   MiddleName = table.Column<string>(type: "longtext", nullable: false)
+                       .Annotation("MySql:CharSet", "utf8mb4"),
+                   Action = table.Column<string>(type: "longtext", nullable: false)
+                       .Annotation("MySql:CharSet", "utf8mb4"),
+                   Details = table.Column<string>(type: "longtext", nullable: false)
+                       .Annotation("MySql:CharSet", "utf8mb4"),
+                   Date = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                   Time = table.Column<TimeSpan>(type: "time(6)", nullable: true),
+                   IpAddress = table.Column<string>(type: "longtext", nullable: false)
+                       .Annotation("MySql:CharSet", "utf8mb4"),
+                   Page = table.Column<string>(type: "longtext", nullable: true)
+                       .Annotation("MySql:CharSet", "utf8mb4")
+               },
+               constraints: table =>
+               {
+                   table.PrimaryKey("PK_ActivityLogs", x => x.Id);
+                   table.ForeignKey(
+                       name: "FK_ActivityLogs_Users_UserId",
+                       column: x => x.UserId,
+                       principalTable: "Users",
+                       principalColumn: "Id",
+                       onDelete: ReferentialAction.SetNull);
+               })
+               .Annotation("MySql:CharSet", "utf8mb4");
             migrationBuilder.CreateTable(
                 name: "Admins",
                 columns: table => new
@@ -61,6 +71,31 @@ namespace SingleTicketing.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Admins", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "AuditTrails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EntityId = table.Column<int>(type: "int", nullable: false),
+                    FieldName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OldValue = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NewValue = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Action = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Username = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Timestamp = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditTrails", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -285,7 +320,43 @@ namespace SingleTicketing.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-        
+            migrationBuilder.CreateTable(
+                name: "ActivityLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    Username = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FirstName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MiddleName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Action = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Details = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Time = table.Column<TimeSpan>(type: "time(6)", nullable: true),
+                    IpAddress = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Page = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivityLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ActivityLogs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Attachments",
@@ -349,6 +420,9 @@ namespace SingleTicketing.Migrations
 
             migrationBuilder.DropTable(
                 name: "Attachments");
+
+            migrationBuilder.DropTable(
+                name: "AuditTrails");
 
             migrationBuilder.DropTable(
                 name: "Drivers");

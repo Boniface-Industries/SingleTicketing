@@ -1,0 +1,66 @@
+﻿@model AuditViewModel
+@Html.Partial("_SuperAdminSidebar.cshtml")
+@{
+    ViewData["Title"] = "Audit Trail";
+}
+
+<h2>Audit Trail</h2>
+
+<div class="mb-3">
+    <label for="filterDate" class="form-label">Filter by Date:</label>
+    <input type="date" id="filterDate" class="form-control"
+           value="@Model.FilterDate?.ToString("yyyy-MM-dd")"
+           onchange="this.form.submit();" />
+    <form method="get" id="filterForm" action="@Url.Action("Audit")">
+        <input type="hidden" name="page" value="1" />
+        <input type="hidden" name="filterDate" value="@Model.FilterDate?.ToString("yyyy-MM-dd")" />
+    </form>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Field Name</th>
+            <th>Old Value</th>
+            <th>New Value</th>
+            <th>Action</th>
+            <th>Username</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.AuditTrails != null && Model.AuditTrails.Any())
+        {
+            foreach (var audit in Model.AuditTrails)
+            {
+                <tr>
+                    <td>@audit.FieldName</td>
+                    <td>@audit.OldValue</td>
+                    <td>@audit.NewValue</td>
+                    <td>@audit.Action</td>
+                    <td>@audit.Username</td>
+                    <td>@audit.Timestamp.ToString("g")</td> <!-- Short date and time pattern -->
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">No audit records found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pagination">
+    @if (Model.TotalPages > 1)
+    {
+        for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a href="@Url.Action("Audit", new { page = i, filterDate = Model.FilterDate })"
+               class="@(Model.PageNumber == i ? "active" : "")">
+                @i
+            </a>
+        }
+    }
+</div>

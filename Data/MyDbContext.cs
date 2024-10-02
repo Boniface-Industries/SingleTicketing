@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SingleTicketing.Models;
+using SingleTicketing.Services;
 namespace SingleTicketing.Data
 {
     public class MyDbContext : DbContext
@@ -19,6 +20,8 @@ namespace SingleTicketing.Data
         public DbSet<Violation> Violations { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
         public DbSet<ActivityLog> ActivityLogs { get; set; }
+        public DbSet<AuditTrail> AuditTrails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -26,13 +29,13 @@ namespace SingleTicketing.Data
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Role)
                 .WithMany()
-                .HasForeignKey(u => u.RoleName)       
-                .HasPrincipalKey(r => r.RoleName);     
+                .HasForeignKey(u => u.RoleName)
+                .HasPrincipalKey(r => r.RoleName);
 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Status)
                 .WithMany()
-                .HasForeignKey(u => u.StatusName)       
+                .HasForeignKey(u => u.StatusName)
                 .HasPrincipalKey(s => s.StatusName);
 
             // Define relationship between ActivityLog and User
@@ -40,9 +43,8 @@ namespace SingleTicketing.Data
                 .HasOne(log => log.User)
                 .WithMany()  // Assuming User does not have a collection of ActivityLogs
                 .HasForeignKey(log => log.UserId)
-                .OnDelete(DeleteBehavior.Cascade); // Configure cascade delete behavior if desired
+                .OnDelete(DeleteBehavior.SetNull); // Set UserId to null instead of deleting the log
         }
-
 
     }
 

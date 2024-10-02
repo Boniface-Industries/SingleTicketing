@@ -21,7 +21,6 @@ namespace SingleTicketing.Controllers
 
             return View(logs); // Pass the logs to the view
         }
-
-
+   
     }
 }
