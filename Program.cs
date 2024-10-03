@@ -5,7 +5,7 @@ using SingleTicketing.Data;
 using SingleTicketing.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddScoped<IAuditTrailService, AuditTrailService>();
 // Add services to the container.
 builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
 builder.Services.AddScoped<IUserService, UserService>();
